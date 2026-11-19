@@ -4,8 +4,9 @@ from django.db import models
 
 class User(AbstractUser):
     class Role(models.TextChoices):
+        STUDENT = "STUDENT", "Student"
         REP = "REP", "Society Rep"
         ADMIN = "ADMIN", "Admin"
 
-    role = models.CharField(max_length=10, choices=Role.choices, default=Role.REP)
+    role = models.CharField(max_length=10, choices=Role.choices, default=Role.STUDENT)
     phone = models.CharField(max_length=20, blank=True)
