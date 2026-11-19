@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django.contrib.postgres',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -82,11 +83,25 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+# The database comes from DATABASE_URL in .env, e.g. postgres://localhost/venues
+# or postgres://user:password@localhost:5432/venues. We need PostgreSQL: the
+# clash constraint and the row locks do not work on SQLite.
+def database_from_url(url):
+    from urllib.parse import unquote, urlparse
+
+    u = urlparse(url)
+    return {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': u.path.lstrip('/'),
+        'USER': unquote(u.username or ''),
+        'PASSWORD': unquote(u.password or ''),
+        'HOST': u.hostname or '',
+        'PORT': u.port or '',
     }
+
+
+DATABASES = {
+    'default': database_from_url(os.environ.get('DATABASE_URL', 'postgres:///venues'))
 }
 
 

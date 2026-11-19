@@ -1,3 +1,4 @@
+import threading
 from datetime import datetime, time, timedelta
 from io import StringIO
 from zoneinfo import ZoneInfo
@@ -5,7 +6,8 @@ from zoneinfo import ZoneInfo
 from django.contrib.auth import get_user_model
 from django.core.exceptions import PermissionDenied
 from django.core.management import call_command
-from django.test import TestCase
+from django.db import connection
+from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 
 from societies.models import Society
@@ -335,3 +337,66 @@ class CloseBookingsTests(Base):
             b.refresh_from_db()
         self.assertEqual((done.status, stale.status, future.status), ("COMPLETED", "EXPIRED", "CONFIRMED"))
         self.assertIn("1 completed, 1 expired", out.getvalue())
+
+
+class DatabaseConstraintTests(Base):
+    """The last safety net: the database itself refuses overlapping bookings."""
+
+    def test_database_refuses_an_overlap_even_if_the_checks_are_skipped(self):
+        from django.db import IntegrityError, transaction
+        self.make(at(1, 9), at(1, 11))
+        with self.assertRaises(IntegrityError), transaction.atomic():
+            self.make(at(1, 10), at(1, 12))  # .save() skips every rule
+
+    def test_back_to_back_is_allowed_by_the_database(self):
+        self.make(at(1, 9), at(1, 11))
+        self.make(at(1, 11), at(1, 13))
+
+    def test_cancelled_bookings_do_not_block_in_the_database(self):
+        self.make(at(1, 9), at(1, 11), status=Booking.Status.CANCELLED)
+        self.make(at(1, 9), at(1, 11))
+
+    def test_other_venue_is_allowed_by_the_database(self):
+        self.make(at(1, 9), at(1, 11))
+        self.make(at(1, 9), at(1, 11), venue=self.lab)
+
+
+class ConcurrencyTests(TransactionTestCase):
+    """Two reps press Book at the same moment: exactly one wins, no double booking.
+
+    A normal TestCase wraps everything in one transaction and cannot fake two
+    users, so this uses TransactionTestCase and two real threads. Needs PostgreSQL.
+    """
+
+    def test_two_requests_for_the_same_slot(self):
+        pres = User.objects.create_user("p1", password="x")
+        vp = User.objects.create_user("p2", password="x")
+        a = User.objects.create_user("a", password="x")
+        b = User.objects.create_user("b", password="x")
+        s1 = Society.objects.create(name="One", president=pres, vice_president=vp, is_verified=True)
+        s2 = Society.objects.create(name="Two", president=a, vice_president=b, is_verified=True)
+        hall = Classroom.objects.create(name="Hall", building="M", floor=1, capacity=50,
+                                        opens_at=time(8), closes_at=time(20))
+        start, end = at(3, 10), at(3, 12)
+        barrier = threading.Barrier(2)
+        results = []
+
+        def book(society, user):
+            try:
+                barrier.wait()
+                BookingService.request(society, hall, start, end, user)
+                results.append("ok")
+            except BookingError:
+                results.append("refused")
+            finally:
+                connection.close()
+
+        threads = [threading.Thread(target=book, args=(s1, pres)),
+                   threading.Thread(target=book, args=(s2, a))]
+        for t in threads:
+            t.start()
+        for t in threads:
+            t.join()
+
+        self.assertEqual(sorted(results), ["ok", "refused"])
+        self.assertEqual(Booking.objects.filter(venue=hall).count(), 1)

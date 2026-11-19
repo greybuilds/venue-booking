@@ -1,8 +1,10 @@
 from datetime import timedelta
 
 from django.conf import settings
+from django.contrib.postgres.constraints import ExclusionConstraint
+from django.contrib.postgres.fields import DateTimeRangeField, RangeOperators
 from django.db import models, transaction
-from django.db.models import F, Q
+from django.db.models import F, Func, Q
 from django.utils import timezone
 
 from .exceptions import BookingError, InvalidTransition
@@ -10,6 +12,13 @@ from .signals import status_changed
 
 # Cancelling a CONFIRMED booking needs this much notice (admins are exempt).
 CANCEL_NOTICE = timedelta(hours=24)
+
+
+class TsTzRange(Func):
+    """start, end -> a PostgreSQL time range [start, end). Half open, so back to back is fine."""
+
+    function = "TSTZRANGE"
+    output_field = DateTimeRangeField()
 
 
 class Booking(models.Model):
@@ -52,6 +61,16 @@ class Booking(models.Model):
         constraints = [
             models.CheckConstraint(
                 condition=Q(end__gt=F("start")), name="booking_end_after_start"
+            ),
+            # Last safety net: even a bug in our code cannot create an overlap. Only
+            # PENDING and CONFIRMED bookings hold the slot, so the others do not count.
+            ExclusionConstraint(
+                name="no_overlapping_bookings",
+                expressions=[
+                    ("venue", RangeOperators.EQUAL),
+                    (TsTzRange("start", "end"), RangeOperators.OVERLAPS),
+                ],
+                condition=Q(status__in=["PENDING", "CONFIRMED"]),
             ),
         ]
         indexes = [models.Index(fields=["venue", "start"], name="booking_venue_start_idx")]
