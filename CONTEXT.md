@@ -16,7 +16,7 @@ accounts, societies, venues, bookings, receipts, notifications
 
 ## Models
 
-* User (accounts): extends AbstractUser, role = REP or ADMIN. AUTH\_USER\_MODEL = accounts.User
+* User (accounts): extends AbstractUser, role = STUDENT (default), REP or ADMIN, plus phone. AUTH\_USER\_MODEL = accounts.User. Booking rights come from Society.can\_book(user) (President or VP of a verified society), not from the role alone.
 * Society (societies): president, vice\_president, is\_verified
 * Venue (venues): a REAL table, not abstract. Fields: name, building, floor, capacity, opens\_at, closes\_at, requires\_approval, max\_hours, buffer\_minutes
 * Classroom(Venue): has\_projector
