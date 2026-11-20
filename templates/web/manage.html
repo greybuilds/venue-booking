@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Approvals | Roomly{% endblock %}
+{% block content %}
+<div class="page-head"><p class="eyebrow mb-1">Admin</p><h1>Approvals {% if pending_count %}<span class="chip approval">{{ pending_count }} waiting</span>{% endif %}</h1></div>
+<ul class="nav nav-pills mb-3">
+  {% for val, label in statuses %}<li class="nav-item"><a class="nav-link {% if status == val %}active{% endif %}" href="?status={{ val }}">{{ label }}</a></li>{% endfor %}
+</ul>
+<div class="table-responsive">
+<table class="table table-striped align-middle">
+  <thead><tr><th>When</th><th>Venue</th><th>Society</th><th>Requested by</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for b in bookings %}
+  <tr>
+    <td>{{ b.start|date:"D j M" }}<br><span class="text-muted small">{{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></td>
+    <td>{{ b.venue.name }}</td><td>{{ b.society }}</td><td>{{ b.booked_by.username }}</td>
+    <td>{% include "web/partials/status.html" %}</td>
+    <td class="text-end">
+      {% if b.status == "PENDING" %}
+      <form method="post" action="{% url 'manage_action' b.pk 'confirm' %}" class="d-inline">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}"><button class="btn btn-sm btn-accent">Confirm</button></form>
+      <form method="post" action="{% url 'manage_action' b.pk 'reject' %}" class="d-inline-flex gap-1">{% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <input class="form-control form-control-sm" name="reason" placeholder="Reason" required style="width:9rem">
+        <button class="btn btn-sm btn-outline-ink">Reject</button></form>
+      {% else %}<a class="btn btn-sm btn-outline-ink" href="{% url 'booking_detail' b.pk %}">Open</a>{% endif %}
+    </td>
+  </tr>
+  {% empty %}<tr><td colspan="6" class="text-muted">Nothing in this list.</td></tr>{% endfor %}
+  </tbody>
+</table>
+</div>
+{% endblock %}

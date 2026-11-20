@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}{{ venue.name }} | Roomly{% endblock %}
+{% block content %}
+<div class="page-head">
+  <p class="eyebrow mb-1">{{ kind }}</p>
+  <h1>{{ venue.name }}</h1>
+  <p class="text-muted mb-0">{{ venue.building }}, floor {{ venue.floor }}</p>
+</div>
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h2 class="h5 fw-bold mb-0">Availability, {{ day|date:"D j M Y" }}</h2>
+      <div class="btn-group btn-group-sm">
+        <a class="btn btn-outline-ink" href="?date={{ prev|date:'Y-m-d' }}">&larr;</a>
+        <a class="btn btn-outline-ink" href="?date={{ next|date:'Y-m-d' }}">&rarr;</a>
+      </div>
+    </div>
+    <div class="timeline">
+      {% for h in hours %}<div class="tick" style="left:{{ h.left }}%"></div>{% endfor %}
+      {% for bar in bars %}
+        <div class="slot {{ bar.b.status|lower }}" style="left:{{ bar.left }}%;width:{{ bar.width }}%" title="{{ bar.b.society }} {{ bar.b.start|time:'H:i' }}-{{ bar.b.end|time:'H:i' }}">{{ bar.b.society }}</div>
+      {% endfor %}
+    </div>
+    <div class="tick-labels">{% for h in hours %}<span style="left:{{ h.left }}%">{{ h.label }}</span>{% endfor %}</div>
+    <p class="small text-muted mt-2">Black = confirmed. Dashed orange = waiting for approval. Empty space is free.</p>
+    {% if bars %}
+    <ul class="list-unstyled">
+      {% for bar in bars %}<li>{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }} &middot; {{ bar.b.society }} {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}
+    </ul>
+    {% else %}<p class="fw-semibold">Free all day.</p>{% endif %}
+  </div>
+  <div class="col-lg-4">
+    <div class="vb-card">
+      <dl class="kv mb-3">
+        <dt>Capacity</dt><dd>{{ venue.capacity }} people</dd>
+        <dt>Open</dt><dd>{{ venue.opens_at|time:"H:i" }} to {{ venue.closes_at|time:"H:i" }}</dd>
+        <dt>Longest booking</dt><dd>{{ venue.max_hours }} hours</dd>
+        <dt>Gap between bookings</dt><dd>{{ venue.buffer_minutes }} min</dd>
+        <dt>Confirmation</dt><dd>{% if venue.requires_approval %}Admin approval{% else %}Instant{% endif %}</dd>
+        {% if extra.has_projector %}<dt>Extras</dt><dd>Projector</dd>{% endif %}
+        {% if extra.equipment %}<dt>Equipment</dt><dd>{{ extra.equipment }}</dd>{% endif %}
+        {% if extra.supervisor %}<dt>Supervisor</dt><dd>{{ extra.supervisor }}</dd>{% endif %}
+        {% if extra.av_kit %}<dt>AV kit</dt><dd>{{ extra.av_kit }}</dd>{% endif %}
+      </dl>
+      <a class="btn btn-accent w-100" href="{% url 'book' %}?venue={{ venue.pk }}&date={{ day|date:'Y-m-d' }}">Book this venue</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

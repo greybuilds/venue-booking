@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Booking #{{ booking.pk }} | Roomly{% endblock %}
+{% block content %}
+<div class="page-head"><p class="eyebrow mb-1">Booking #{{ booking.pk }}</p>
+  <h1>{{ booking.venue.name }} {% include "web/partials/status.html" with b=booking %}</h1></div>
+<div class="vb-card" style="max-width:640px">
+  <dl class="kv mb-0">
+    <dt>Society</dt><dd>{{ booking.society }}</dd>
+    <dt>Date</dt><dd>{{ booking.start|date:"l j F Y" }}</dd>
+    <dt>Time</dt><dd>{{ booking.start|time:"H:i" }} to {{ booking.end|time:"H:i" }}</dd>
+    <dt>Venue</dt><dd>{{ booking.venue.building }}, floor {{ booking.venue.floor }}</dd>
+    <dt>Requested by</dt><dd>{{ booking.booked_by.get_full_name|default:booking.booked_by.username }}</dd>
+    {% if booking.reason %}<dt>Reason</dt><dd>{{ booking.reason }}</dd>{% endif %}
+  </dl>
+  {% if booking.status == "PENDING" %}<p class="text-muted mt-3 mb-0">Waiting for an admin to approve this.</p>{% endif %}
+</div>
+<div class="d-flex gap-2 mt-3">
+  {% if booking.status == "CONFIRMED" or booking.status == "COMPLETED" %}<a class="btn btn-ink" href="{% url 'receipt' booking.pk %}">View receipt</a>{% endif %}
+  {% if can_cancel %}
+  <form method="post" action="{% url 'cancel_booking' booking.pk %}" onsubmit="return confirm('Cancel this booking?')">{% csrf_token %}
+    <button class="btn btn-outline-ink">{% if booking.status == "PENDING" %}Withdraw request{% else %}Cancel booking{% endif %}</button>
+  </form>
+  {% endif %}
+  <a class="btn btn-link" href="{% url 'my_bookings' %}">Back</a>
+</div>
+{% endblock %}

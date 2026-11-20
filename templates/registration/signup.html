@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Sign up | Roomly{% endblock %}
+{% block content %}
+<div class="auth-card">
+  <h1 class="h3 fw-bold mb-1">Create your account</h1>
+  <p class="text-muted">Students can browse and watch availability. Society presidents and VPs can book.</p>
+  <form method="post" novalidate>{% csrf_token %}
+    {% for f in form %}
+      <div class="mb-3">
+        <label class="form-label fw-semibold" for="{{ f.id_for_label }}">{{ f.label }}</label>
+        {{ f }}
+        {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        {% if f.help_text %}<div class="form-text">{{ f.help_text|safe }}</div>{% endif %}
+      </div>
+    {% endfor %}
+    <button class="btn btn-accent w-100">Sign up</button>
+  </form>
+  <p class="text-center text-muted mt-3 mb-0">Already have one? <a href="{% url 'login' %}">Log in</a></p>
+</div>
+{% endblock %}

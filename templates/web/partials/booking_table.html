@@ -1,0 +1,18 @@
+<div class="table-responsive">
+<table class="table table-striped align-middle">
+  <thead><tr><th>When</th><th>Venue</th><th>Society</th><th>Status</th><th></th></tr></thead>
+  <tbody>
+  {% for b in bookings %}
+    <tr>
+      <td>{{ b.start|date:"D j M" }}<br><span class="text-muted small">{{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></td>
+      <td><a href="{% url 'venue_detail' b.venue.pk %}">{{ b.venue.name }}</a></td>
+      <td>{{ b.society }}</td>
+      <td>{% include "web/partials/status.html" %}</td>
+      <td class="text-end"><a class="btn btn-sm btn-outline-ink" href="{% url 'booking_detail' b.pk %}">Open</a></td>
+    </tr>
+  {% empty %}
+    <tr><td colspan="5" class="text-muted">{{ empty|default:"Nothing here." }}</td></tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
