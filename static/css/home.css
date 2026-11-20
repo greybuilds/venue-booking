@@ -21,10 +21,11 @@
 .app-frame__body { padding: 1.6rem 1.4rem 1.4rem; }
 .track { position: relative; height: 92px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
 .track__tick { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--border); }
-.track__slot { position: absolute; top: 14px; height: 64px; border-radius: 8px; display: flex; align-items: center; padding: 0 .7rem; font-size: .85rem; font-weight: 700; overflow: hidden; }
+.track__slot { position: absolute; top: 14px; height: 64px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 .4rem; font-size: .85rem; font-weight: 700; overflow: hidden; }
+.track__slot--hit { padding-right: 1.6rem; }
 .track__slot--booked { background: var(--text); color: #fff; }
 .track__slot--try { background: var(--accent-tint); border: 2px dashed var(--accent); color: var(--text); animation: try-move 4s var(--ease-enter) infinite; }
-.try-clash, .try-ok { position: absolute; inset: 0; display: flex; align-items: center; padding: 0 .7rem; }
+.try-clash, .try-ok { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 .4rem; }
 .try-clash { background: #fdeceb; color: var(--rejected); animation: fade-clash 4s linear infinite; }
 .try-ok { background: var(--accent); color: #fff; animation: fade-ok 4s linear infinite; }
 .track__labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: .45rem; }
@@ -35,7 +36,7 @@
 .verdict__msg--2 { animation: m2 4s linear infinite; } .verdict__msg--2 b { color: var(--accent-hover); }
 .verdict__msg--3 { animation: m3 4s linear infinite; } .verdict__msg--3 b { color: var(--confirmed); }
 /* 0-35% clash, 40-55% moves, 60-100% held on the finished picture */
-@keyframes try-move { 0%, 38% { transform: none; } 52%, 100% { transform: translateX(100%); } }
+@keyframes try-move { 0%, 38% { transform: none; } 52%, 100% { transform: translateX(75%); } }
 @keyframes fade-clash { 0%, 40% { opacity: 1; } 46%, 100% { opacity: 0; } }
 @keyframes fade-ok { 0%, 50% { opacity: 0; } 58%, 100% { opacity: 1; } }
 @keyframes m1 { 0%, 34% { opacity: 1; } 38%, 100% { opacity: 0; } }
@@ -75,6 +76,7 @@
   .app-frame__body { padding: 1.1rem .9rem 1rem; }
   .track { height: 76px; }
   .track__slot { top: 10px; height: 54px; padding: 0 .3rem; font-size: .62rem; }
+  .track__slot--hit { padding-right: 1rem; }
   .try-clash, .try-ok { padding: 0 .3rem; }
   .track__labels { font-size: .66rem; }
   .verdict { height: 4rem; }
@@ -83,7 +85,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   [data-rise], [data-settle] { animation: none; }
-  .track__slot--try { animation: none; transform: translateX(100%); }
+  .track__slot--try { animation: none; transform: translateX(75%); }
   .try-clash, .verdict__msg--1, .verdict__msg--2 { animation: none; opacity: 0; }
   .try-ok, .verdict__msg--3 { animation: none; opacity: 1; }
   .moment { height: auto; } .moment__stick { position: static; height: auto; padding: 4rem 0; }
