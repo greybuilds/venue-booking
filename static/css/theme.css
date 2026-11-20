@@ -198,3 +198,17 @@ form.vb-card:hover { transform: none; box-shadow: 8px 8px 0 var(--text); border-
 .rows li { padding: .85rem 0; border-top: 1px solid var(--border); }
 .rows li:last-child { border-bottom: 1px solid var(--border); }
 .page-head .status { margin-top: .6rem; }
+
+/* status pill inside a heading: reset the display type so it stays readable */
+h1 .status { font-family: var(--bs-body-font-family); font-size: .9rem; letter-spacing: 0; line-height: 1.2; padding: .25rem .75rem; vertical-align: middle; margin: 0 0 0 .5rem; }
+
+/* phones: booking tables become stacked rows, no sideways scroll */
+@media (max-width: 575.98px) {
+  .table-responsive:has(.table) { overflow: visible; }
+  .table thead { display: none; }
+  .table, .table tbody, .table tr, .table td { display: block; width: 100%; }
+  .table tbody tr { padding: .9rem 0; border-bottom: 1px solid var(--border); }
+  .table > :not(caption) > * > * { padding: .2rem 0; border-bottom: 0; }
+  .table tbody tr:hover > * { background: transparent; }
+  .table td.text-end { text-align: left !important; padding-top: .6rem; }
+}
