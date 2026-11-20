@@ -124,8 +124,8 @@ a { text-underline-offset: 3px; }
 .table-striped > tbody > tr:nth-of-type(odd) > * { background: var(--surface); }
 
 /* footer */
-.vb-footer { position: relative; border-top: 1px solid var(--border); background: var(--bg); padding: 3rem 0 2.75rem; }
-.vb-footer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none;
+.vb-footer { position: relative; margin-top: 3rem; background: var(--bg); padding: 3rem 0 2.75rem; }
+.vb-footer::before { display: none; content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none;
   background: linear-gradient(90deg, #cfcfca 1px, transparent 1px) 0 0 / calc((100% - 1px) / 12) 100% repeat-x; border-right: 1px solid #cfcfca; }
 .vb-footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1.75rem 3rem; }
 .vb-footer__brand p { margin: .6rem 0 0; color: var(--muted); max-width: 22rem; font-size: .95rem; }
@@ -192,7 +192,7 @@ h1, h2, .page-head h1, .vb-nav .navbar-brand { font-family: var(--display); }
 @keyframes settle { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; transform: none; } }
 
 /* page head: one pattern everywhere, enters once on load */
-.page-head { padding: 3rem 0 1.6rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+.page-head { padding: 3rem 0 1.6rem; margin-bottom: .6rem; }
 .page-head h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; font-size: clamp(2.2rem, 5vw, 3.6rem); }
 .page-head .eyebrow { margin-bottom: .5rem !important; }
 /* inner pages are tools people open many times a day: headings do not animate in */
@@ -337,7 +337,7 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 }
 
 /* ---- venues page ---- */
-.filterbar { display: flex; flex-wrap: wrap; gap: .5rem; padding: .55rem; border: 1px solid var(--border); border-radius: 22px; background: var(--surface); margin-bottom: 1.2rem; }
+.filterbar { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1.2rem; }
 .filterbar .form-control, .filterbar .form-select { flex: 1 1 11rem; border-radius: 999px; background-color: var(--bg); }
 .filterbar .btn { border-radius: 999px; padding-inline: 1.6rem; }
 .result-line { font-size: .88rem; color: var(--muted); margin: 0 0 1rem .4rem; }
@@ -362,4 +362,17 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 @media (hover: hover) and (pointer: fine) {
   .vb-card.vcard:has(a):hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--text); border-color: var(--text); }
   .vb-card.vcard:has(a):hover .vcard__seats { background: var(--accent); }
+}
+
+/* ---- societies page ---- */
+.vb-card.scard { background: var(--bg); border: 1px solid var(--text); border-radius: 18px; padding: 1.3rem; box-shadow: 4px 4px 0 var(--border); display: flex; align-items: center; gap: 1rem; }
+.scard__av { flex: none; width: 3.6rem; height: 3.6rem; border-radius: 50%; background: var(--text); color: #fff; display: grid; place-content: center; font-family: var(--display); font-weight: 700; font-size: 1.5rem; transition: background-color .18s var(--ease), transform .25s var(--ease); }
+.scard:nth-child(3n+2) .scard__av, .col-lg-4:nth-child(3n+2) .scard__av { background: var(--accent); }
+.scard h5 { margin: 0 !important; }
+.scard__pres { display: flex; align-items: center; gap: .5rem; font-size: .88rem; color: var(--muted); margin: .2rem 0 .6rem; }
+.scard__pres i { flex: none; width: 1.15rem; height: 1.15rem; border-radius: 50%; background: var(--border); display: inline-grid; place-content: center; font-style: normal; font-size: .6rem; font-weight: 700; color: var(--text); }
+.vb-card.scard::after { top: 1.3rem; right: 1.3rem; }
+@media (hover: hover) and (pointer: fine) {
+  .vb-card.scard:has(a):hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--text); border-color: var(--text); }
+  .vb-card.scard:has(a):hover .scard__av { background: var(--accent); transform: rotate(-8deg) scale(1.06); }
 }
