@@ -6,10 +6,9 @@
 {% block content %}
 <section class="home-hero" aria-labelledby="hero-h">
   <div class="home-hero__text">
-    <p class="eyebrow" data-rise style="--d:0ms">For university societies</p>
-    <h1 id="hero-h" data-rise style="--d:80ms">Room booking for university societies</h1>
-    <p class="home-hero__lead" data-rise style="--d:150ms">Pick a venue and a time. Clashes, opening hours and weekly limits are checked the moment you submit, and the nearest free slots come back with the answer.</p>
-    <div class="home-hero__actions" data-rise style="--d:200ms">
+    <h1 id="hero-h" data-rise style="--d:0ms">Room booking for university societies</h1>
+    <p class="home-hero__lead" data-rise style="--d:90ms">Pick a venue and a time. Clashes, opening hours and weekly limits are checked the moment you submit, and the nearest free slots come back with the answer.</p>
+    <div class="home-hero__actions" data-rise style="--d:150ms">
       <a href="{% url 'book' %}" class="btn btn-accent">Book a venue</a>
       <a href="{% url 'venue_list' %}" class="link-draw">Browse {{ venue_count }} venue{{ venue_count|pluralize }}</a>
     </div>
@@ -19,6 +18,7 @@
     <div class="app-frame__bar">
       <span class="app-frame__title">{% if venues %}{{ venues.0.name }}{% else %}Room A-101{% endif %}</span>
       <span class="app-frame__day">Sunday</span>
+      <span class="app-frame__hint" data-hint>Drag the request</span>
       <button type="button" class="app-frame__pause" data-pause aria-label="Pause the demo" tabindex="-1">Pause</button>
     </div>
     <div class="app-frame__body">
@@ -29,7 +29,7 @@
         <span class="track__tick" style="left:75%"></span>
         <div class="track__slot track__slot--booked track__slot--hit" style="left:0;width:16.667%">Chess</div>
         <div class="track__slot track__slot--booked" style="left:50%;width:16.667%">Robotics</div>
-        <div class="track__slot track__slot--try" style="left:12.5%;width:16.667%">
+        <div class="track__slot track__slot--try" data-drag style="left:12.5%;width:16.667%">
           <span class="try-clash">Request</span><span class="try-ok">Request</span>
         </div>
       </div>
@@ -38,6 +38,7 @@
         <p class="verdict__msg verdict__msg--1"><b>Clash</b> with Chess Society, 08:00 to 10:00</p>
         <p class="verdict__msg verdict__msg--2"><b>Free</b> 11:00 to 13:00. Moving your request.</p>
         <p class="verdict__msg verdict__msg--3"><b>Confirmed</b> Coding Club, 11:00 to 13:00</p>
+        <p class="verdict__live" data-live aria-live="polite"></p>
       </div>
     </div>
   </div>

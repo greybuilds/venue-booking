@@ -218,3 +218,21 @@ h1 .status { font-family: var(--bs-body-font-family); font-size: .9rem; letter-s
 .auth-art { display: none; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; min-height: 440px; background: #fff; }
 .auth-art canvas { display: block; }
 @media (min-width: 992px) { .auth-split { grid-template-columns: 1.25fr 1fr; } .auth-art { display: block; } }
+
+/* ---- browser surfaces: the parts nobody draws ---- */
+::selection { background: var(--accent); color: #fff; }
+html { scrollbar-color: #c9c9c4 transparent; scrollbar-width: thin; }
+h1, h2, h3 { text-wrap: balance; }
+p, li { text-wrap: pretty; }
+table, .receipt, .chip, time { font-variant-numeric: tabular-nums; }
+input, textarea, select { caret-color: var(--accent); accent-color: var(--accent); }
+a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
+/* page-to-page: cross-document view transition, nav stays put */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  .vb-nav { view-transition-name: nav; }
+  ::view-transition-old(root) { animation: 160ms var(--ease) both vt-out; }
+  ::view-transition-new(root) { animation: 260ms var(--ease) 60ms both vt-in; }
+  @keyframes vt-out { to { opacity: 0; } }
+  @keyframes vt-in { from { opacity: 0; translate: 0 6px; } }
+}

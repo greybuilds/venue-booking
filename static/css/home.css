@@ -1,4 +1,4 @@
-/* Home page. Motion follows the taste rules: transform and opacity only, one cycle 2.5-4s, nothing moves on scroll except the one dealt moment. */
+/* Home page. Motion: transform, opacity and clip-path only. Entrance on load, a draggable demo, one pinned scroll moment, and scroll-linked reveals that fall back to static. */
 
 /* ---- hero: alone on the first screen ---- */
 .home-hero { min-height: calc(100svh - 72px); display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; padding: 3rem 0; }
@@ -15,7 +15,7 @@
 [data-settle] { animation: settle .7s var(--ease) 220ms backwards; }
 
 /* ---- the live app frame: Roomly's own day view catching a clash ---- */
-.app-frame { background: var(--bg); border: 1px solid var(--text); border-radius: 16px; box-shadow: 10px 10px 0 var(--text); overflow: hidden; }
+.app-frame { background: var(--bg); border: 1px solid #d6d6d1; border-radius: 16px; box-shadow: 0 1px 2px rgba(17,17,17,.08), 0 14px 32px -10px rgba(17,17,17,.22), 0 48px 90px -30px rgba(17,17,17,.2); overflow: hidden; }
 .app-frame__bar { display: flex; align-items: center; gap: .8rem; padding: .8rem 1.1rem; border-bottom: 1px solid var(--border); background: var(--surface); font-weight: 700; }
 .app-frame__day { color: var(--muted); font-weight: 500; font-size: .9rem; }
 .app-frame__pause { margin-left: auto; font: inherit; font-size: .78rem; font-weight: 600; background: none; border: 1px solid var(--border); border-radius: 999px; padding: .1rem .7rem; color: var(--muted); }
@@ -99,3 +99,41 @@
 .art-dial { position: absolute; right: 0; top: 0; bottom: 0; width: 46%; pointer-events: none; }
 .home-close > :not(.art-dial) { position: relative; }
 @media (max-width: 767.98px) { .art-band { height: 140px; } .art-dial { width: 100%; opacity: .25; } }
+
+/* ---- interactive demo: drag the request, it snaps to the nearest free slot ---- */
+.app-frame__hint { margin-left: auto; font-size: .78rem; font-weight: 500; color: var(--muted); transition: opacity .3s var(--ease); }
+.app-frame__hint + .app-frame__pause { margin-left: .5rem; }
+.app-frame.is-live .app-frame__hint { opacity: 0; }
+.track__slot--try { touch-action: pan-y; }
+.app-frame.is-js .track__slot--try { cursor: grab; }
+.app-frame.is-live .track__slot--try { animation: none; transition: transform .5s var(--ease); will-change: transform; }
+.app-frame.is-live .track__slot--try.is-dragging { transition: none; cursor: grabbing; box-shadow: 0 10px 24px -8px rgba(255,106,0,.45); }
+.app-frame.is-live .try-clash, .app-frame.is-live .try-ok { animation: none; transition: opacity .18s var(--ease); }
+.app-frame.is-live .try-clash { opacity: 0; } .app-frame.is-live .try-ok { opacity: 0; }
+.app-frame.is-live[data-state="clash"] .try-clash { opacity: 1; }
+.app-frame.is-live[data-state="ok"] .try-ok { opacity: 1; }
+.app-frame.is-live .verdict__msg { display: none; }
+.verdict__live { position: absolute; left: 0; right: 0; margin: 0; font-size: 1.02rem; display: none; }
+.verdict__live b { margin-right: .35rem; }
+.app-frame.is-live .verdict__live { display: block; }
+.app-frame.is-live[data-state="clash"] .verdict__live b { color: var(--rejected); }
+.app-frame.is-live[data-state="ok"] .verdict__live b { color: var(--confirmed); }
+.app-frame.is-live .track__slot--try:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+
+/* ---- scroll-linked reveals: progressive enhancement, static where unsupported ---- */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    @keyframes reveal-up { from { opacity: 0; translate: 0 28px; clip-path: inset(0 0 100% 0); } to { opacity: 1; translate: 0 0; clip-path: inset(0 0 0 0); } }
+    @keyframes reveal-line { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
+    .steps li { animation: reveal-up linear backwards; animation-timeline: view(); animation-range: entry 5% entry 55%; }
+    .steps li:nth-child(2) { animation-range: entry 12% entry 62%; }
+    .steps li:nth-child(3) { animation-range: entry 19% entry 69%; }
+    .home-block h2, .home-close h2 { animation: reveal-line linear backwards; animation-timeline: view(); animation-range: entry 0% entry 45%; }
+    .vb-card { animation: reveal-up linear backwards; animation-timeline: view(); animation-range: entry 0% entry 50%; }
+    .col-md-6:nth-child(2) .vb-card { animation-range: entry 8% entry 58%; }
+    .col-md-6:nth-child(3) .vb-card { animation-range: entry 16% entry 66%; }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .app-frame.is-live .track__slot--try { transition: none; }
+}
