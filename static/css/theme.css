@@ -302,3 +302,9 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
   .form-select option::checkmark { content: ""; width: .35rem; height: .65rem; border: solid var(--accent); border-width: 0 2px 2px 0; rotate: 45deg; order: 1; margin-left: auto; }
   .form-select option { display: flex; align-items: center; }
 }
+
+/* open-hours bar on venue cards: a 06:00-24:00 day line */
+.daybar { position: relative; height: 8px; border-radius: 4px; background: var(--bg); border: 1px solid var(--border); }
+.daybar i { position: absolute; top: -1px; height: 8px; border-radius: 4px; background: var(--text); left: calc((var(--o) - 6) / 18 * 100%); width: calc((var(--c) - var(--o)) / 18 * 100%); transition: background-color .18s var(--ease); }
+.daybar small { position: absolute; top: 100%; left: 0; margin-top: .25rem; font-size: .72rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+@media (hover: hover) and (pointer: fine) { .vb-card:has(a):hover .daybar i { background: var(--accent); } }
