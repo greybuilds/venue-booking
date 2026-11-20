@@ -140,3 +140,61 @@ h1, h2, .page-head h1, .vb-nav .navbar-brand { font-family: var(--display); }
 .link-draw:not(:hover) { background-position: 100% 100%; }
 
 @media (prefers-reduced-motion: reduce) { .btn, .vb-card, .link-draw { transition: none; } .btn:hover, .btn:active, .vb-card:has(a):hover { transform: none; } }
+
+/* ---- taste pass: every page ---- */
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes settle { from { opacity: 0; transform: translateY(10px) scale(.99); } to { opacity: 1; transform: none; } }
+
+/* page head: one pattern everywhere, enters once on load */
+.page-head { padding: 3rem 0 1.6rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+.page-head h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; font-size: clamp(2.2rem, 5vw, 3.6rem); }
+.page-head .eyebrow { margin-bottom: .5rem !important; }
+.page-head > *, .page-head > div > * { animation: rise .6s var(--ease-enter, cubic-bezier(.22,1,.36,1)) backwards; }
+.page-head > :nth-child(2), .page-head > div > :nth-child(2) { animation-delay: 90ms; }
+.page-head > :nth-child(3) { animation-delay: 180ms; }
+
+/* cards: one style. Linked cards carry an arrow that steps 3px on hover */
+.vb-card h5, .vb-card .h5 { font-family: var(--display); font-weight: 700; font-size: 1.3rem; letter-spacing: -.02em; }
+.vb-card { position: relative; }
+.vb-card:has(.stretched-link)::after { content: "\2192"; position: absolute; top: 1.2rem; right: 1.3rem; font-weight: 700; color: var(--text); transition: transform .18s var(--ease), color .18s var(--ease); }
+.vb-card:has(.stretched-link):hover::after { transform: translateX(3px); color: var(--accent); }
+.vb-card .kv { margin-bottom: 0; }
+
+/* tool cards (forms): the offset-shadow frame from the landing page */
+.auth-card, form.vb-card { border: 1px solid var(--text); border-radius: 16px; box-shadow: 8px 8px 0 var(--text); background: var(--bg); animation: settle .7s var(--ease-enter, cubic-bezier(.22,1,.36,1)) backwards; }
+.auth-card h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.03em; font-size: 2rem; }
+form.vb-card:hover { transform: none; box-shadow: 8px 8px 0 var(--text); border-color: var(--text); }
+.form-label { font-size: .85rem; font-weight: 700 !important; letter-spacing: .01em; }
+.form-control, .form-select { padding: .65rem .85rem; }
+
+/* tables: hairline rows, no stripes */
+.table { --bs-table-bg: transparent; border-color: var(--border); }
+.table thead th { font-size: .75rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 700; border-bottom: 1px solid var(--text); }
+.table > :not(caption) > * > * { padding: 1rem .8rem; border-bottom-color: var(--border); }
+.table-striped > tbody > tr:nth-of-type(odd) > * { background: transparent; }
+.table tbody tr { transition: background-color .15s var(--ease); }
+.table tbody tr:hover > * { background: var(--surface); }
+
+/* availability timeline: taller, labels centred */
+.timeline { height: 92px; }
+.timeline .slot { top: 12px; bottom: 12px; justify-content: center; text-align: center; font-size: .85rem; border-radius: 8px; }
+.legend { display: flex; flex-wrap: wrap; gap: .4rem 1.4rem; font-size: .82rem; color: var(--muted); margin: .7rem 0 1.2rem; }
+.legend i { display: inline-block; width: .9rem; height: .9rem; border-radius: 3px; vertical-align: -2px; margin-right: .4rem; background: var(--text); }
+.legend i.wait { background: var(--accent-tint); border: 1.5px dashed var(--accent); }
+.legend i.free { background: var(--surface); border: 1px solid var(--border); }
+
+/* filter pills + chips */
+.nav-pills .nav-link { transition: background-color .15s var(--ease), color .15s var(--ease); }
+.nav-pills .nav-link:not(.active):hover { background: var(--surface); }
+.stat { font-family: var(--display); }
+
+/* page-level small links */
+.btn-link { color: var(--text); font-weight: 700; }
+
+@media (prefers-reduced-motion: reduce) { .page-head > *, .page-head > div > *, .auth-card, form.vb-card { animation: none; } .vb-card::after { transition: none !important; } }
+
+/* hairline list rows */
+.rows { list-style: none; margin: 0 0 1rem; padding: 0; max-width: 640px; }
+.rows li { padding: .85rem 0; border-top: 1px solid var(--border); }
+.rows li:last-child { border-bottom: 1px solid var(--border); }
+.page-head .status { margin-top: .6rem; }

@@ -22,9 +22,9 @@
       {% endfor %}
     </div>
     <div class="tick-labels">{% for h in hours %}<span style="left:{{ h.left }}%">{{ h.label }}</span>{% endfor %}</div>
-    <p class="small text-muted mt-2">Black = confirmed. Dashed orange = waiting for approval. Empty space is free.</p>
+    <p class="legend"><span><i></i>Confirmed</span><span><i class="wait"></i>Waiting for approval</span><span><i class="free"></i>Free</span></p>
     {% if bars %}
-    <ul class="list-unstyled">
+    <ul class="rows">
       {% for bar in bars %}<li>{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }} &middot; {{ bar.b.society }} {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}
     </ul>
     {% else %}<p class="fw-semibold">Free all day.</p>{% endif %}

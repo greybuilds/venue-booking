@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 {% block title %}{{ code }} | Roomly{% endblock %}
 {% block content %}
-<div class="text-center py-5">
-  <div class="stat" style="font-size:4rem;color:var(--accent)">{{ code }}</div>
+<div class="py-5">
+  <div class="stat" style="font-size:clamp(5rem,16vw,10rem);line-height:1;color:var(--accent)">{{ code }}</div>
   <p class="lead">{{ text }}</p>
   <a href="{% url 'home' %}" class="btn btn-ink">Back home</a>
 </div>

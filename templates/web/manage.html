@@ -6,7 +6,7 @@
   {% for val, label in statuses %}<li class="nav-item"><a class="nav-link {% if status == val %}active{% endif %}" href="?status={{ val }}">{{ label }}</a></li>{% endfor %}
 </ul>
 <div class="table-responsive">
-<table class="table table-striped align-middle">
+<table class="table align-middle">
   <thead><tr><th>When</th><th>Venue</th><th>Society</th><th>Requested by</th><th>Status</th><th></th></tr></thead>
   <tbody>
   {% for b in bookings %}
