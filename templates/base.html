@@ -111,11 +111,17 @@
 
 
     <!-- Footer -->
-    <footer class="d-print-none vb-footer text-center py-3 mt-5">
-        <div class="container">
-            <p class="mb-0 text-muted">
-                Roomly &middot; University society venue booking
-            </p>
+    <footer class="d-print-none vb-footer mt-5">
+        <div class="container vb-footer__in">
+            <div class="vb-footer__brand">
+                <a class="navbar-brand" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="1.5" y="3.5" width="14" height="7.5" rx="2.2"/><rect x="8.5" y="13" width="14" height="7.5" rx="2.2"/></svg>Room<span class="dot">ly</span></a>
+                <p>Rooms for university societies. Pick a slot, get an answer.</p>
+            </div>
+            <nav class="vb-footer__links" aria-label="Footer">
+                <a href="{% url 'venue_list' %}">Venues</a>
+                <a href="{% url 'society_list' %}">Societies</a>
+                <a href="{% url 'book' %}">Book a venue</a>
+            </nav>
         </div>
     </footer>
 

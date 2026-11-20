@@ -124,7 +124,14 @@ a { text-underline-offset: 3px; }
 .table-striped > tbody > tr:nth-of-type(odd) > * { background: var(--surface); }
 
 /* footer */
-.vb-footer { border-top: 1px solid var(--border); background: var(--bg); }
+.vb-footer { position: relative; border-top: 1px solid var(--border); background: var(--bg); padding: 3rem 0 2.75rem; }
+.vb-footer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; pointer-events: none;
+  background: linear-gradient(90deg, #cfcfca 1px, transparent 1px) 0 0 / calc((100% - 1px) / 12) 100% repeat-x; border-right: 1px solid #cfcfca; }
+.vb-footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 1.75rem 3rem; }
+.vb-footer__brand p { margin: .6rem 0 0; color: var(--muted); max-width: 22rem; font-size: .95rem; }
+.vb-footer__links { display: flex; flex-wrap: wrap; gap: .4rem 1.75rem; padding-top: .35rem; }
+.vb-footer__links a { color: var(--text); font-weight: 600; text-decoration: none; font-size: .95rem; }
+.vb-footer__links a:hover, .vb-footer__links a:focus-visible { color: var(--accent-hover); }
 
 /* nav button-links */
 .vb-nav .btn-link.nav-link { text-decoration: none; }
