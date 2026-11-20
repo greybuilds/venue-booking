@@ -23,16 +23,21 @@
 .app-frame__day { color: var(--muted); font-weight: 500; font-size: .9rem; }
 .app-frame__pause { margin-left: auto; font: inherit; font-size: .78rem; font-weight: 600; background: none; border: 1px solid var(--border); border-radius: 999px; padding: .1rem .7rem; color: var(--muted); }
 .app-frame__body { padding: 1.6rem 1.4rem 1.4rem; }
-.track { position: relative; height: 92px; border: 1px solid var(--border); border-radius: 10px; background: var(--surface); overflow: hidden; }
-.track__tick { position: absolute; top: 0; bottom: 0; border-left: 1px dashed var(--border); }
-.track__slot { position: absolute; top: 14px; height: 64px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 .4rem; font-size: .85rem; font-weight: 700; overflow: hidden; }
-.track__slot--hit { padding-right: 1.6rem; }
+/* One hour grid shared by ticks, slots and labels: --u is one hour of the lane */
+.track { position: relative; height: 64px; border: 1px solid var(--border); border-radius: 12px; background: var(--surface); overflow: hidden; }
+.track__lane, .track__labels { position: absolute; inset: 0 7px; container-type: inline-size; }
+.track__tick, .track__slot, .track__labels span { --u: calc(100cqw / 12); }
+.track__tick { position: absolute; top: 0; bottom: 0; left: calc(var(--s) * var(--u)); border-left: 1px dashed var(--border); }
+.track__slot { position: absolute; top: 10px; bottom: 10px; left: calc(var(--s) * var(--u) + 3px); width: calc(var(--l) * var(--u) - 6px); border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 .4rem; font-size: .8rem; font-weight: 700; letter-spacing: -.005em; overflow: hidden; }
 .track__slot--booked { background: var(--text); color: #fff; }
-.track__slot--try { background: var(--accent-tint); border: 2px dashed var(--accent); color: var(--text); animation: try-move 4s var(--ease-in-out) infinite; }
+.track__slot--try { background: var(--accent-tint); border: 1.5px dashed var(--accent); color: var(--text); animation: try-move 4s var(--ease-in-out) infinite; }
 .try-clash, .try-ok { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 .4rem; }
 .try-clash { background: #fdeceb; color: var(--rejected); animation: fade-clash 4s linear infinite; }
 .try-ok { background: var(--accent); color: #fff; animation: fade-ok 4s linear infinite; }
-.track__labels { display: flex; justify-content: space-between; font-size: .75rem; color: var(--muted); margin-top: .45rem; }
+.track__labels { position: relative; inset: auto; margin: .5rem 7px 0; height: 1.1em; font-size: .75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.track__labels span { position: absolute; left: calc(var(--s) * var(--u)); transform: translateX(-50%); }
+.track__labels span:first-child { transform: none; }
+.track__labels span:last-child { transform: translateX(-100%); }
 .verdict { position: relative; height: 3.2rem; margin-top: 1.3rem; border-top: 1px solid var(--border); padding-top: 1rem; }
 .verdict__msg { position: absolute; left: 0; right: 0; margin: 0; font-size: 1.02rem; opacity: 0; }
 .verdict__msg b { margin-right: .35rem; }
@@ -40,7 +45,7 @@
 .verdict__msg--2 { animation: m2 4s linear infinite; } .verdict__msg--2 b { color: var(--accent-hover); }
 .verdict__msg--3 { animation: m3 4s linear infinite; } .verdict__msg--3 b { color: var(--confirmed); }
 /* 0-35% clash, 40-55% moves, 60-100% held on the finished picture */
-@keyframes try-move { 0%, 38% { transform: none; } 52%, 100% { transform: translateX(75%); } }
+@keyframes try-move { 0%, 38% { transform: none; } 52%, 100% { transform: translateX(calc(1.5 * var(--u))); } }
 @keyframes fade-clash { 0%, 40% { opacity: 1; } 46%, 100% { opacity: 0; } }
 @keyframes fade-ok { 0%, 50% { opacity: 0; } 58%, 100% { opacity: 1; } }
 @keyframes m1 { 0%, 34% { opacity: 1; } 38%, 100% { opacity: 0; } }
@@ -78,9 +83,12 @@
 @media (max-width: 575px) {
   .home-hero__actions .btn, .home-close .btn { width: 100%; }
   .app-frame__body { padding: 1.1rem .9rem 1rem; }
-  .track { height: 76px; }
-  .track__slot { top: 10px; height: 54px; padding: 0 .3rem; font-size: .62rem; }
-  .track__slot--hit { padding-right: 1rem; }
+  .home-hero__text::before { inset: -2rem -.75rem; }
+  .app-frame__bar { gap: .5rem; padding: .7rem .9rem; white-space: nowrap; font-size: .92rem; }
+  .app-frame__day, .app-frame__hint, .app-frame__pause { font-size: .7rem; }
+  .app-frame__pause { padding: .1rem .55rem; }
+  .track { height: 52px; }
+  .track__slot { top: 8px; bottom: 8px; padding: 0 .15rem; font-size: .6rem; letter-spacing: -.01em; }
   .try-clash, .try-ok { padding: 0 .3rem; }
   .track__labels { font-size: .66rem; }
   .verdict { height: 4rem; }
@@ -89,7 +97,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   [data-rise], [data-settle] { animation: fade .3s ease backwards; animation-delay: 0ms; }
-  .track__slot--try { animation: none; transform: translateX(75%); }
+  .track__slot--try { animation: none; transform: translateX(calc(1.5 * var(--u))); }
   .try-clash, .verdict__msg--1, .verdict__msg--2 { animation: none; opacity: 0; }
   .try-ok, .verdict__msg--3 { animation: none; opacity: 1; }
   .moment { height: auto; } .moment__stick { position: static; padding: 2.5rem 0; }

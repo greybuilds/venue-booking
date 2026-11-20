@@ -24,17 +24,18 @@
     </div>
     <div class="app-frame__body">
       <div class="track">
-        <span class="track__tick" style="left:0"></span>
-        <span class="track__tick" style="left:25%"></span>
-        <span class="track__tick" style="left:50%"></span>
-        <span class="track__tick" style="left:75%"></span>
-        <div class="track__slot track__slot--booked track__slot--hit" style="left:0;width:16.667%">Chess</div>
-        <div class="track__slot track__slot--booked" style="left:50%;width:16.667%">Robotics</div>
-        <div class="track__slot track__slot--try" data-drag style="left:12.5%;width:16.667%">
-          <span class="try-clash">Request</span><span class="try-ok">Request</span>
+        <div class="track__lane">
+          <span class="track__tick" style="--s:3"></span>
+          <span class="track__tick" style="--s:6"></span>
+          <span class="track__tick" style="--s:9"></span>
+          <div class="track__slot track__slot--booked" style="--s:0;--l:2">Chess</div>
+          <div class="track__slot track__slot--booked" style="--s:6;--l:2">Robotics</div>
+          <div class="track__slot track__slot--try" data-drag style="--s:1.5;--l:2">
+            <span class="try-clash">Request</span><span class="try-ok">Request</span>
+          </div>
         </div>
       </div>
-      <div class="track__labels"><span>08:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>20:00</span></div>
+      <div class="track__labels"><span style="--s:0">08:00</span><span style="--s:3">11:00</span><span style="--s:6">14:00</span><span style="--s:9">17:00</span><span style="--s:12">20:00</span></div>
       <div class="verdict">
         <p class="verdict__msg verdict__msg--1"><b>Clash</b> with Chess Society, 08:00 to 10:00</p>
         <p class="verdict__msg verdict__msg--2"><b>Free</b> 11:00 to 13:00. Moving your request.</p>

@@ -53,6 +53,7 @@
 (function () {
   var frame = document.querySelector('.app-frame');
   var track = frame && frame.querySelector('.track');
+  var lane = track && track.querySelector('.track__lane');
   var req = track && track.querySelector('[data-drag]');
   var live = frame && frame.querySelector('[data-live]');
   if (!req || !live) return;
@@ -77,8 +78,7 @@
   }
   function clock(x) { var m = Math.round((8 + x) * 2) * 30; return ('0' + Math.floor(m / 60)).slice(-2) + ':' + ('0' + (m % 60)).slice(-2); }
   function place(x) {
-    var w = req.offsetWidth;
-    req.style.transform = 'translateX(' + ((x / LEN) * w - (0.125 * track.clientWidth)) + 'px)';
+    req.style.transform = 'translateX(' + ((x - 1.5) * lane.clientWidth / SPAN) + 'px)';
   }
   function say(x, settled) {
     var c = clash(x);
@@ -105,7 +105,7 @@
   });
   req.addEventListener('pointermove', function (e) {
     if (!dragging) return;
-    var perH = track.clientWidth / SPAN;
+    var perH = lane.clientWidth / SPAN;
     h = Math.min(SPAN - LEN, Math.max(0, startH + (e.clientX - startX) / perH));
     place(h); say(h, false);
   });
