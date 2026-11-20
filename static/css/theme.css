@@ -376,3 +376,28 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
   .vb-card.scard:has(a):hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--text); border-color: var(--text); }
   .vb-card.scard:has(a):hover .scard__av { background: var(--accent); transform: rotate(-8deg) scale(1.06); }
 }
+
+/* societies: a wrapping roster of pills, staggered by hand instead of a card grid */
+.roster { list-style: none; margin: 1.5rem 0 0; padding: 0 0 1rem; display: flex; flex-wrap: wrap; gap: 1.1rem 1.25rem; align-items: flex-start; }
+.roster__item:nth-child(4n+2) { margin-top: 1.6rem; }
+.roster__item:nth-child(4n+3) { margin-left: 1.5rem; }
+.roster__item:nth-child(4n) { margin-top: .8rem; }
+.roster__pill { display: flex; align-items: center; gap: .85rem; padding: .55rem 1.6rem .55rem .55rem; background: var(--bg); border: 1px solid var(--text); border-radius: 999px; box-shadow: 4px 4px 0 var(--border); color: var(--text); text-decoration: none; transition: transform .25s var(--ease), box-shadow .25s var(--ease); }
+.roster__av { flex: none; width: 3.2rem; height: 3.2rem; border-radius: 50%; background: var(--text); color: #fff; display: grid; place-content: center; font-family: var(--display); font-weight: 700; font-size: 1.35rem; transition: background-color .18s var(--ease), transform .25s var(--ease); }
+.roster__item:nth-child(3n+2) .roster__av { background: var(--accent); }
+.roster__txt { display: flex; flex-direction: column; min-width: 0; }
+.roster__name { font-family: var(--display); font-weight: 700; font-size: 1.3rem; line-height: 1.15; letter-spacing: -.01em; }
+.roster__meta { display: flex; align-items: center; gap: .4rem; font-size: .82rem; color: var(--muted); margin-top: .15rem; }
+.roster__dot { flex: none; width: .5rem; height: .5rem; border-radius: 50%; background: var(--pending, #B7791F); }
+.roster__dot.is-ok { background: var(--confirmed, #1F8A4C); }
+.roster__pill:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+@media (hover: hover) {
+  .roster__pill:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--text); }
+  .roster__pill:hover .roster__av { background: var(--accent); transform: rotate(-8deg) scale(1.06); }
+}
+@media (max-width: 575px) {
+  .roster { flex-direction: column; align-items: stretch; gap: .9rem; }
+  .roster__item { margin: 0 !important; }
+  .roster__item:nth-child(even) { margin-left: 1.25rem !important; }
+  .roster__name { font-size: 1.15rem; }
+}

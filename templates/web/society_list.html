@@ -3,17 +3,18 @@
 {% block content %}
 <div class="page-head"><p class="eyebrow mb-1">Directory</p><h1>Societies</h1></div>
 <p class="result-line"><b>{{ societies|length }}</b> societ{{ societies|length|pluralize:"y,ies" }}</p>
-<div class="row g-3">
+<ul class="roster">
   {% for s in societies %}
-  <div class="col-md-6 col-lg-4"><div class="vb-card scard">
-    <div class="scard__av" aria-hidden="true">{{ s.name|slice:":1"|upper }}</div>
-    <div>
-      <h5><a class="stretched-link text-decoration-none" href="{% url 'society_detail' s.pk %}">{{ s.name }}</a></h5>
-      <div class="scard__pres"><i aria-hidden="true">{{ s.president.username|slice:":1"|upper }}</i>{{ s.president.get_full_name|default:s.president.username }}</div>
-      {% if s.is_verified %}<span class="status status-confirmed">Verified</span>{% else %}<span class="status status-pending">Awaiting verification</span>{% endif %}
-    </div>
-  </div></div>
-  {% empty %}<div class="col-12"><div class="vb-card text-muted">No societies registered yet.</div></div>
+  <li class="roster__item">
+    <a class="roster__pill" href="{% url 'society_detail' s.pk %}">
+      <span class="roster__av" aria-hidden="true">{{ s.name|slice:":1"|upper }}</span>
+      <span class="roster__txt">
+        <span class="roster__name">{{ s.name }}</span>
+        <span class="roster__meta"><i class="roster__dot {% if s.is_verified %}is-ok{% endif %}" aria-hidden="true"></i>{{ s.president.get_full_name|default:s.president.username }} · {% if s.is_verified %}Verified{% else %}Awaiting verification{% endif %}</span>
+      </span>
+    </a>
+  </li>
+  {% empty %}<li class="text-muted">No societies registered yet.</li>
   {% endfor %}
-</div>
+</ul>
 {% endblock %}
