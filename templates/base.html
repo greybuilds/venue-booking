@@ -29,7 +29,7 @@
         <div class="container">
 
             <a class="navbar-brand" href="/" aria-label="Roomly home">
-                <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="1.5" y="3.5" width="14" height="7.5" rx="2.2"/><rect x="8.5" y="13" width="14" height="7.5" rx="2.2"/></svg>
+                <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg>
                 <span class="brand-word">Room<span class="dot">ly</span></span>
             </a>
 
@@ -114,7 +114,7 @@
     <footer class="d-print-none vb-footer mt-5">
         <div class="container vb-footer__in">
             <div class="vb-footer__brand">
-                <a class="navbar-brand" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="1.5" y="3.5" width="14" height="7.5" rx="2.2"/><rect x="8.5" y="13" width="14" height="7.5" rx="2.2"/></svg>Room<span class="dot">ly</span></a>
+                <a class="navbar-brand" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg>Room<span class="dot">ly</span></a>
                 <p>Rooms for university societies. Pick a slot, get an answer.</p>
             </div>
             <nav class="vb-footer__links" aria-label="Footer">
@@ -133,6 +133,7 @@
 
     {% load static %}
     <script src="{% static 'js/nav.js' %}" defer></script>
+    <script src="{% static 'js/motion.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 
 </body>

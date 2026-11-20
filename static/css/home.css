@@ -3,7 +3,10 @@
 /* ---- hero: alone on the first screen ---- */
 .home-hero { min-height: calc(100svh - 76px); display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; padding: 2rem 0; }
 .home-hero h1 { font-family: var(--display); font-size: clamp(2.6rem, 5.2vw, 4.4rem); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; margin: .6rem 0 1.2rem; }
-.home-hero__lead { color: var(--muted); font-size: 1.15rem; max-width: 30rem; }
+.home-hero__lead { color: #3d3d3a; font-size: 1.15rem; max-width: 30rem; }
+/* a soft white halo so the text reads cleanly over the art */
+.home-hero__text { position: relative; isolation: isolate; }
+.home-hero__text::before { content: ""; position: absolute; inset: -2.5rem -3rem; z-index: -1; background: radial-gradient(ellipse at center, #fff 52%, rgba(255,255,255,0) 76%); pointer-events: none; }
 .home-hero__actions { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; margin-top: 2rem; }
 
 /* entrance: once on load */
