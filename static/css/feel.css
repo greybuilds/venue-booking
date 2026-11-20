@@ -1,0 +1,62 @@
+/* Toasts, bottom sheet, in-place row swaps, rolling numbers, page transition. Loads after theme.css. */
+
+/* ---- toasts ---- */
+.vb-toasts { position: fixed; z-index: 1090; right: 1.25rem; bottom: 1.25rem; display: flex; flex-direction: column; align-items: flex-end; gap: .7rem; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+.vb-toast { pointer-events: auto; display: flex; align-items: center; gap: .7rem; max-width: min(26rem, calc(100vw - 2.5rem)); padding: .65rem .65rem .65rem 1rem; background: #fff; color: var(--text); border: 2px solid var(--text); border-radius: 999px; box-shadow: 4px 4px 0 var(--text); font-weight: 600; font-size: .95rem; line-height: 1.3; animation: toast-in .42s var(--ease) both; }
+.vb-toast__dot { flex: none; width: .8rem; height: .8rem; border-radius: 50%; background: var(--accent); }
+.vb-toast--success .vb-toast__dot { background: var(--confirmed); }
+.vb-toast--error .vb-toast__dot { background: var(--rejected); }
+.vb-toast--warning .vb-toast__dot { background: var(--pending); }
+.vb-toast__msg { flex: 1; min-width: 0; }
+.vb-toast__x { flex: none; width: 1.9rem; height: 1.9rem; display: grid; place-items: center; border: 0; padding: 0; background: var(--surface); color: var(--text); border-radius: 50%; cursor: pointer; transition: transform .09s var(--ease), background-color .15s var(--ease); }
+.vb-toast__x:hover { background: var(--accent-tint); }
+.vb-toast__x:active { transform: scale(.88); }
+.vb-toast.is-leaving { animation: toast-out .2s var(--ease) both; }
+/* the key comes up: slides in with the shadow collapsed, then pops out to full depth */
+@keyframes toast-in { from { opacity: 0; transform: translateY(14px) scale(.96); box-shadow: 0 0 0 var(--text); } 60% { box-shadow: 0 0 0 var(--text); } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(8px) scale(.97); box-shadow: 0 0 0 var(--text); } }
+@media (max-width: 575.98px) {
+  .vb-toasts { left: 1rem; right: 1rem; bottom: 1rem; align-items: stretch; }
+  .vb-toast { max-width: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vb-toast, .vb-toast.is-leaving { animation: none; }
+  .vb-toast.is-leaving { opacity: 0; }
+}
+
+/* ---- bottom sheet ---- */
+.vb-sheet { --drag: 0px; position: fixed; inset: auto 0 0 0; margin: 0 auto; width: 100%; max-width: 34rem; max-height: min(86vh, 40rem); padding: 0; border: 2px solid var(--text); border-bottom: 0; border-radius: 28px 28px 0 0; background: #fff; color: var(--text); overflow: hidden; box-shadow: 0 -4px 0 var(--text);
+  transform: translateY(calc(100% + 8px)); transition: transform .38s var(--ease); }
+.vb-sheet.is-open { transform: translateY(var(--drag)); }
+.vb-sheet.is-drag { transition: none; }
+.vb-sheet::backdrop { background: rgba(17, 17, 17, 0); transition: background-color .3s var(--ease); }
+.vb-sheet.is-open::backdrop { background: rgba(17, 17, 17, .42); }
+.vb-sheet__panel { display: flex; flex-direction: column; max-height: inherit; }
+.vb-sheet__grab { flex: none; display: grid; place-items: center; padding: .8rem 0 .5rem; cursor: grab; touch-action: none; }
+.vb-sheet__grab::before { content: ""; width: 3rem; height: .3rem; border-radius: 999px; background: var(--border); }
+.vb-sheet.is-drag .vb-sheet__grab { cursor: grabbing; }
+.vb-sheet__body { overflow: auto; padding: .25rem 1.5rem 1.6rem; overscroll-behavior: contain; }
+.vb-sheet__title { display: flex; align-items: center; flex-wrap: wrap; gap: .6rem; font-size: 1.5rem; margin: 0 0 1rem; }
+.vb-sheet__actions { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.25rem; }
+@media (prefers-reduced-motion: reduce) { .vb-sheet, .vb-sheet::backdrop { transition: none; } }
+
+/* ---- rows that change in place (HTMX) ---- */
+tr.htmx-swapping { opacity: 0; transition: opacity .2s var(--ease); }
+tr.htmx-added { animation: row-in .35s var(--ease) both; }
+@keyframes row-in { from { background-color: var(--accent-tint); } }
+.vb-empty { display: none; }
+tbody > .vb-empty:only-child { display: table-row; }
+.htmx-request button { opacity: .6; pointer-events: none; }
+
+/* ---- rolling numbers ---- */
+number-flow { font-variant-numeric: tabular-nums; --number-flow-char-height: 1em; }
+[data-pending].is-empty { display: none; }
+
+/* ---- page to page: the page body rises in, the nav stays put ---- */
+@media (prefers-reduced-motion: no-preference) {
+  #main-content { view-transition-name: page; }
+  ::view-transition-old(page) { animation: 140ms var(--ease) both vt-page-out; }
+  ::view-transition-new(page) { animation: 380ms var(--ease) 40ms both vt-page-in; }
+  @keyframes vt-page-out { to { opacity: 0; translate: 0 -8px; } }
+  @keyframes vt-page-in { from { opacity: 0; translate: 0 22px; scale: .99; } }
+}

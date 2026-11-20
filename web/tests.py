@@ -88,3 +88,39 @@ class WebPagesTests(TestCase):
         self.client.force_login(self.vp)
         self.client.post(reverse("cancel_booking", args=[b.pk]))
         b.refresh_from_db(); self.assertEqual(b.status, "CANCELLED")
+
+
+class HtmxTests(TestCase):
+    """In-place swaps: same rules as the full-page paths, different response shape."""
+    setUpTestData = classmethod(WebPagesTests.setUpTestData.__func__)
+    slot = WebPagesTests.slot
+
+    def pending_booking(self):
+        self.client.force_login(self.rep)
+        self.client.post(reverse("book"), {"society": self.soc.pk, "venue": self.lab.pk, **self.slot()})
+        return Booking.objects.get()
+
+    def test_confirm_removes_row_from_pending_list_and_sends_toast(self):
+        b = self.pending_booking()
+        self.client.force_login(self.admin)
+        r = self.client.post(reverse("manage_action", args=[b.pk, "confirm"]), {"next": "/manage/?status=PENDING"},
+                             headers={"HX-Request": "true"})
+        b.refresh_from_db(); self.assertEqual(b.status, "CONFIRMED")
+        self.assertEqual(r.content, b"")
+        self.assertIn('"type": "success"', r["HX-Trigger"])
+        self.assertIn('"pending": {"value": 0}', r["HX-Trigger"])
+
+    def test_htmx_error_swaps_nothing(self):
+        b = self.pending_booking()
+        self.client.force_login(self.admin)
+        r = self.client.post(reverse("manage_action", args=[b.pk, "reject"]), {"reason": "", "next": "/manage/"},
+                             headers={"HX-Request": "true"})
+        self.assertEqual(r["HX-Reswap"], "none")
+        self.assertIn('"type": "error"', r["HX-Trigger"])
+        b.refresh_from_db(); self.assertEqual(b.status, "PENDING")
+
+    def test_detail_returns_sheet_partial_for_htmx(self):
+        b = self.pending_booking()
+        r = self.client.get(reverse("booking_detail", args=[b.pk]), headers={"HX-Request": "true"})
+        self.assertTemplateUsed(r, "web/partials/booking_sheet.html")
+        self.assertNotContains(r, "<html")

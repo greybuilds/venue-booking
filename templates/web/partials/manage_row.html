@@ -1,0 +1,17 @@
+<tr id="mrow-{{ b.pk }}">
+  <td>{{ b.start|date:"D j M" }}<br><span class="text-muted small">{{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></td>
+  <td>{{ b.venue.name }}</td><td>{{ b.society }}</td><td>{{ b.booked_by.username }}</td>
+  <td>{% include "web/partials/status.html" %}</td>
+  <td class="text-end">
+    {% if b.status == "PENDING" %}
+    <form method="post" action="{% url 'manage_action' b.pk 'confirm' %}" class="d-inline"
+          hx-post="{% url 'manage_action' b.pk 'confirm' %}" hx-target="#mrow-{{ b.pk }}" hx-swap="outerHTML swap:200ms">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}"><button class="btn btn-sm btn-accent">Confirm</button></form>
+    <form method="post" action="{% url 'manage_action' b.pk 'reject' %}" class="d-inline-flex gap-1"
+          hx-post="{% url 'manage_action' b.pk 'reject' %}" hx-target="#mrow-{{ b.pk }}" hx-swap="outerHTML swap:200ms">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}">
+      <input class="form-control form-control-sm" name="reason" placeholder="Reason" required style="width:9rem">
+      <button class="btn btn-sm btn-outline-ink">Reject</button></form>
+    {% else %}<a class="btn btn-sm btn-outline-ink" href="{% url 'booking_detail' b.pk %}">Open</a>{% endif %}
+  </td>
+</tr>

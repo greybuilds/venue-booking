@@ -5,7 +5,10 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.db.models import Q
-from django.http import Http404
+import json
+from urllib.parse import parse_qs, urlparse
+
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.views.decorators.http import require_POST
@@ -180,9 +183,10 @@ def booking_detail(request, pk):
     booking = get_object_or_404(Booking.objects.select_related("venue", "society", "booked_by"), pk=pk)
     if not (is_admin(request.user) or _my_bookings(request.user).filter(pk=pk).exists()):
         raise Http404
-    return render(request, "web/booking_detail.html", {
-        "booking": booking, "can_cancel": booking.status in ("PENDING", "CONFIRMED"),
-    })
+    ctx = {"booking": booking, "can_cancel": booking.status in ("PENDING", "CONFIRMED")}
+    if request.headers.get("HX-Request") == "true":
+        return render(request, "web/partials/booking_sheet.html", ctx)
+    return render(request, "web/booking_detail.html", ctx)
 
 
 @login_required
@@ -229,22 +233,47 @@ def manage(request):
 @require_POST
 def manage_action(request, pk, action):
     booking = get_object_or_404(Booking, pk=pk)
+    ok, msg = True, ""
     try:
         if action == "confirm":
             booking.confirm(request.user)
-            messages.success(request, "Booking confirmed.")
+            msg = "Booking confirmed."
         elif action == "reject":
             form = RejectForm(request.POST)
             if not form.is_valid():
-                messages.error(request, "Give a reason when rejecting.")
+                ok, msg = False, "Give a reason when rejecting."
             else:
                 booking.reject(form.cleaned_data["reason"], request.user)
-                messages.success(request, "Booking rejected.")
+                msg = "Booking rejected."
         else:
             raise Http404
     except BookingError as e:
-        messages.error(request, str(e))
-    return redirect(request.POST.get("next") or "manage")
+        ok, msg = False, str(e)
+
+    nxt = request.POST.get("next") or "manage"
+    if request.headers.get("HX-Request") == "true":
+        return _manage_htmx(request, booking, ok, msg, nxt)
+    (messages.success if ok else messages.error)(request, msg)
+    return redirect(nxt)
+
+
+def _manage_htmx(request, booking, ok, msg, nxt):
+    """Answer an in-place confirm/reject: the new row, or nothing if it no longer belongs in this list."""
+    booking.refresh_from_db()
+    shown = parse_qs(urlparse(nxt).query).get("status", ["PENDING"])[0]
+    pending = Booking.objects.filter(status="PENDING").count()
+    if not ok:
+        resp = HttpResponse("")
+        resp["HX-Reswap"] = "none"
+    elif booking.status != shown:
+        resp = HttpResponse("")
+    else:
+        resp = render(request, "web/partials/manage_row.html", {"b": booking, "next": nxt})
+    resp["HX-Trigger"] = json.dumps({
+        "toast": {"msg": msg, "type": "success" if ok else "error"},
+        "pending": {"value": pending},
+    })
+    return resp
 
 
 def not_found(request, exception):

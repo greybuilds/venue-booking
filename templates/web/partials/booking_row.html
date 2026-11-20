@@ -1,7 +1,7 @@
 <li class="mb-row{% if past %} is-past{% endif %}">
   <span class="mb-row__date"><b>{{ b.start|date:"j" }}</b><small>{{ b.start|date:"M" }}</small></span>
   <span class="mb-row__txt">
-    <a class="mb-row__venue stretched-link" href="{% url 'booking_detail' b.pk %}">{{ b.venue.name }}</a>
+    <a class="mb-row__venue stretched-link" href="{% url 'booking_detail' b.pk %}" hx-get="{% url 'booking_detail' b.pk %}" hx-target="#sheet-body" hx-swap="innerHTML" hx-push-url="false">{{ b.venue.name }}</a>
     <span class="mb-row__meta">{{ b.society }} &middot; {{ b.start|date:"D" }} {{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span>
   </span>
   {% include "web/partials/status.html" %}
