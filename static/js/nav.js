@@ -28,3 +28,10 @@ document.querySelectorAll('[data-navtrack]').forEach((track) => {
   addEventListener('resize', set);
   set();
 })();
+
+/* A short tick under the finger on touch screens that support it (Android). Feels like a key bottoming out. */
+if (navigator.vibrate) {
+  addEventListener('pointerdown', (e) => {
+    if (e.pointerType === 'touch' && e.target.closest('a, button, .btn, .roundbtn')) navigator.vibrate(7);
+  }, { passive: true });
+}

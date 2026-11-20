@@ -427,14 +427,13 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 
 /* the day: ticks, slots and labels share one lane, inset from the track edge */
 .timeline { height: 76px; border-radius: 14px; }
-.tl__lane { position: absolute; inset: 0 8px; }
+.tl__lane { position: absolute; inset: 0 18px; }
 .timeline .tick { left: calc(var(--l) * 1%); }
 .timeline .slot { top: 12px; bottom: 12px; left: calc(var(--l) * 1% + 2px); width: calc(var(--w) * 1% - 4px); border-radius: 8px; justify-content: center; text-align: center; transition: background-color .15s var(--ease); animation: slot-in .6s var(--ease) backwards; animation-delay: calc(.3s + var(--i, 0) * 70ms); }
 .timeline .slot.pending { border-width: 1.5px; }
 .tick-labels { height: 1.5rem; margin-top: .4rem; position: relative; }
-.tick-labels .tl__lane { inset: 0 8px; }
+.tick-labels .tl__lane { inset: 0 18px; }
 .tick-labels span { left: calc(var(--l) * 1%); font-variant-numeric: tabular-nums; }
-.tick-labels span:first-child { transform: none; } .tick-labels span:last-child { transform: translateX(-100%); }
 .tl__now { position: absolute; top: -4px; bottom: -4px; left: calc(var(--l) * 1%); width: 2px; margin-left: -1px; background: var(--accent); border-radius: 2px; z-index: 2; pointer-events: none; }
 .tl__now::before { content: ""; position: absolute; top: -3px; left: 50%; translate: -50% 0; width: 9px; height: 9px; border-radius: 50%; background: var(--accent); }
 .timeline { overflow: hidden; } .tl__now { top: 0; bottom: 0; }
@@ -503,5 +502,37 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
   .people { flex-direction: column; align-items: stretch; } .person:nth-child(2) { margin: 0 0 0 1.25rem; }
   .bk-row:nth-child(even) { margin-left: 0; }
   .timeline .slot { font-size: .62rem; padding: 0 .3rem; justify-content: flex-start; text-overflow: ellipsis; display: block; line-height: 52px; }
-  .tick-labels span:nth-child(even) { display: none; }
+  .tl__lane, .tick-labels .tl__lane { inset: 0 16px; }
+  .tick-labels span:not(:nth-child(3n+1)) { display: none; }
 }
+
+/* ---- heavy glass nav, on every page ----
+   A glass pill needs something to bend, so every page gets a faint fixed backdrop (warm bloom, cool bloom, dot grid) behind it. */
+body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: radial-gradient(46vmax 46vmax at 92% -8%, rgba(255,106,0,.20), transparent 70%), radial-gradient(40vmax 40vmax at 4% 14%, rgba(17,17,17,.10), transparent 70%), radial-gradient(rgba(17,17,17,.085) 1px, transparent 1.3px) 0 0 / 22px 22px; }
+body:has(.home-hero)::before { display: none; }
+.vb-nav .container {
+  background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.30));
+  -webkit-backdrop-filter: blur(30px) saturate(190%) brightness(1.04); backdrop-filter: blur(30px) saturate(190%) brightness(1.04);
+  border: 1px solid rgba(255,255,255,.7);
+  box-shadow: 0 0 0 1px rgba(17,17,17,.09), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(17,17,17,.06), inset 0 0 22px rgba(255,255,255,.35), 0 2px 4px rgba(17,17,17,.06), 0 24px 46px -16px rgba(17,17,17,.42); }
+@supports not (backdrop-filter: blur(1px)) { .vb-nav .container { background: rgba(255,255,255,.94); } }
+
+/* ---- keys: a solid base under every cap; the cap sinks fast on press and springs back slower ---- */
+.btn.btn-accent, .btn.btn-ink, .btn.btn-outline-ink { position: relative; transition: transform .16s var(--ease), box-shadow .16s var(--ease), background-color .15s var(--ease), color .15s var(--ease); }
+.btn.btn-accent { box-shadow: 0 4px 0 #A83F00, inset 0 1px 0 rgba(255,255,255,.28); }
+.btn.btn-ink { box-shadow: 0 4px 0 #000, inset 0 1px 0 rgba(255,255,255,.16); }
+.btn.btn-outline-ink { box-shadow: 0 3px 0 var(--text); }
+.vb-actions .btn.btn-accent { box-shadow: 0 3px 0 #A83F00, inset 0 1px 0 rgba(255,255,255,.28); }
+@media (hover: hover) and (pointer: fine) {
+  .btn.btn-accent:hover, .btn.btn-ink:hover { transform: translateY(-1px); }
+  .btn.btn-accent:hover { box-shadow: 0 5px 0 #A83F00, inset 0 1px 0 rgba(255,255,255,.28); }
+  .btn.btn-ink:hover { box-shadow: 0 5px 0 #000, inset 0 1px 0 rgba(255,255,255,.16); }
+}
+.btn.btn-accent:active, .btn.btn-ink:active, .btn.btn-outline-ink:active { transform: translateY(4px); box-shadow: 0 0 0 transparent, inset 0 2px 4px rgba(0,0,0,.22); transition-duration: .04s; }
+.vb-links .nav-link:active, .vb-actions .nav-link:active { transform: translateY(1px) scale(.96); transition-duration: .04s; }
+.vb-nav .navbar-brand:active { transform: scale(.95); transition: transform .04s; }
+
+/* cards and pills with an offset shadow get pushed into the page */
+.roster__pill:active, .person:active, .bk-row:active, .roundbtn:active, .vb-card:has(a):active, .vcard:active, .scard:active { transform: translate(3px, 3px) !important; box-shadow: 1px 1px 0 var(--text) !important; transition-duration: .04s !important; }
+@media (prefers-reduced-motion: reduce) { .btn:active, .roundbtn:active, .nav-link:active { transition: none !important; } }
