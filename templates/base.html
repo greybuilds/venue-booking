@@ -62,10 +62,14 @@
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}
-                                <button class="nav-link btn btn-link" type="submit">Log out <span class="who">{{ user.username }}</span></button>
+                                <button class="nav-link btn btn-link" type="submit">Log out</button>
                             </form>
                         </li>
                         <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'book' %}">Book a venue</a></li>
+                        <li class="nav-item vb-me" title="Signed in as {{ user.username }}">
+                            <span class="vb-avatar" role="img" aria-label="Signed in as {{ user.username }}">{{ user.get_full_name|default:user.username|slice:":1"|upper }}</span>
+                            <span class="vb-me__name">{{ user.get_full_name|default:user.username }}</span>
+                        </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link{% if u == 'login' %} active{% endif %}" href="{% url 'login' %}">Log in</a></li>
                         <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'signup' %}">Sign up</a></li>
@@ -111,17 +115,19 @@
 
 
     <!-- Footer -->
-    <footer class="d-print-none vb-footer mt-5">
-        <div class="container vb-footer__in">
-            <div class="vb-footer__brand">
-                <a class="navbar-brand" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg>Room<span class="dot">ly</span></a>
-                <p>Rooms for university societies. Pick a slot, get an answer.</p>
+    <footer class="d-print-none vb-footer">
+        <div class="container">
+            <div class="vb-footer__panel">
+                <div class="vb-footer__brand">
+                    <a class="vb-footer__logo" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg><span>Room<span class="dot">ly</span></span></a>
+                    <p>Rooms for university societies. Pick a slot, get an answer.</p>
+                </div>
+                <nav class="vb-footer__links" aria-label="Footer">
+                    <a href="{% url 'venue_list' %}">Venues</a>
+                    <a href="{% url 'society_list' %}">Societies</a>
+                    <a href="{% url 'book' %}">Book a venue</a>
+                </nav>
             </div>
-            <nav class="vb-footer__links" aria-label="Footer">
-                <a href="{% url 'venue_list' %}">Venues</a>
-                <a href="{% url 'society_list' %}">Societies</a>
-                <a href="{% url 'book' %}">Book a venue</a>
-            </nav>
         </div>
     </footer>
 
