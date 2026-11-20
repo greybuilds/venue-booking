@@ -70,7 +70,7 @@
 @media (max-width: 991px) {
   .home-hero, .home-split { grid-template-columns: 1fr; gap: 2.5rem; }
   .home-hero { min-height: 0; padding: 2rem 0 3rem; }
-  .app-frame { box-shadow: none; }
+  .app-frame { box-shadow: 6px 6px 0 var(--text); }
 }
 @media (max-width: 575px) {
   .home-hero__actions .btn, .home-close .btn { width: 100%; }
