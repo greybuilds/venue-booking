@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Venue Booking | Book a space on campus{% endblock %}
+
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">University societies</p>
+  <h1>Book a campus venue.<br><span class="hl">No clashes.</span></h1>
+  <p class="lead mt-3">Pick a room, pick a time, get an answer. The system checks opening hours, clashes and limits for you, so you don't have to chase anyone.</p>
+  <div class="d-flex gap-2 mt-4 flex-wrap">
+    <a href="#venues" class="btn btn-accent">Browse venues</a>
+    <a href="#how" class="btn btn-outline-ink">How it works</a>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <h2 class="mb-4">How it works</h2>
+  <div class="row g-3">
+    <div class="col-md-4"><div class="vb-card"><div class="step-num">1</div><h5>Choose a venue</h5><p class="mb-0 text-muted">Classrooms, labs and seminar halls, with capacity and opening hours up front.</p></div></div>
+    <div class="col-md-4"><div class="vb-card"><div class="step-num">2</div><h5>Request a slot</h5><p class="mb-0 text-muted">Your society rep submits a time. Clashes and rule breaks are caught straight away, with nearby free slots suggested.</p></div></div>
+    <div class="col-md-4"><div class="vb-card"><div class="step-num">3</div><h5>Get confirmed</h5><p class="mb-0 text-muted">Some venues confirm instantly, others wait for an admin. Either way you get a receipt.</p></div></div>
+  </div>
+</section>
+
+<section class="section" id="venues">
+  <div class="d-flex justify-content-between align-items-end mb-4">
+    <h2 class="mb-0">Venues</h2>
+    <span class="text-muted small">Booking statuses: <span class="status status-pending">Pending</span> <span class="status status-confirmed">Confirmed</span> <span class="status status-rejected">Rejected</span></span>
+  </div>
+  <div class="row g-3">
+    {% for v in venues %}
+    <div class="col-md-6 col-lg-4">
+      <div class="vb-card">
+        <h5 class="mb-1">{{ v.name }}</h5>
+        <div class="venue-meta mb-3">{{ v.building }}, floor {{ v.floor }}</div>
+        <div class="d-flex flex-wrap gap-2 mb-3">
+          <span class="chip">{{ v.capacity }} seats</span>
+          <span class="chip">{{ v.opens_at|time:"H:i" }}&ndash;{{ v.closes_at|time:"H:i" }}</span>
+          <span class="chip">max {{ v.max_hours }}h</span>
+          {% if v.requires_approval %}<span class="chip approval">Needs approval</span>{% endif %}
+        </div>
+      </div>
+    </div>
+    {% empty %}
+    <div class="col-12"><div class="vb-card text-muted">No venues yet. An admin can add them in the admin site.</div></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
