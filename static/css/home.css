@@ -97,7 +97,7 @@
 .home-close { position: relative; overflow: hidden; }
 .art-dial { position: absolute; right: 0; top: 0; bottom: 0; width: 46%; pointer-events: none; }
 .home-close > :not(.art-dial) { position: relative; }
-@media (max-width: 767.98px) { 
+@media (max-width: 767.98px) { .art-dial { width: 100%; opacity: .25; } }
 /* ---- interactive demo: drag the request, it snaps to the nearest free slot ---- */
 .app-frame__hint { margin-left: auto; font-size: .78rem; font-weight: 500; color: var(--muted); transition: opacity .3s var(--ease); }
 .app-frame__hint + .app-frame__pause { margin-left: .5rem; }
