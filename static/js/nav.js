@@ -20,13 +20,3 @@
   track.addEventListener('pointerleave', off);
   track.addEventListener('focusout', (e) => { if (!track.contains(e.relatedTarget)) off(); });
 })();
-
-/* Condense the bar into a floating pill after the first screen of scrolling. */
-(() => {
-  const nav = document.querySelector('.vb-nav');
-  if (!nav) return;
-  const set = () => nav.classList.toggle('is-floating', scrollY > 80 && matchMedia('(min-width: 992px)').matches);
-  addEventListener('scroll', set, { passive: true });
-  addEventListener('resize', set);
-  set();
-})();
