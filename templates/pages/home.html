@@ -49,6 +49,8 @@
   </div>
 </section>
 
+<div class="art-band" data-art="gates" aria-hidden="true"></div>
+
 <section class="home-block" id="how" aria-labelledby="how-h">
   <div class="home-split">
     <h2 id="how-h">Three steps, then a receipt.</h2>
@@ -86,9 +88,10 @@
 </section>
 
 <section class="home-close" aria-labelledby="close-h">
+  <div class="art-dial" data-art="dial" aria-hidden="true"></div>
   <h2 id="close-h">Your next society event needs a room.</h2>
   <a href="{% url 'book' %}" class="btn btn-accent btn-xl">Book a venue</a>
 </section>
 
 {% endblock %}
-{% block extra_js %}<script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
