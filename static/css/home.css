@@ -1,5 +1,5 @@
 /* Home page. Motion follows the taste rules: transform and opacity only, one cycle 2.5-4s, nothing moves on scroll except the one dealt moment. */
-:root { --ease-enter: cubic-bezier(.22, 1, .36, 1); }
+:root { --ease-enter: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); }
 
 /* ---- hero: alone on the first screen ---- */
 .home-hero { min-height: calc(100svh - 72px); display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; padding: 3rem 0; }
@@ -24,7 +24,7 @@
 .track__slot { position: absolute; top: 14px; height: 64px; border-radius: 8px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 .4rem; font-size: .85rem; font-weight: 700; overflow: hidden; }
 .track__slot--hit { padding-right: 1.6rem; }
 .track__slot--booked { background: var(--text); color: #fff; }
-.track__slot--try { background: var(--accent-tint); border: 2px dashed var(--accent); color: var(--text); animation: try-move 4s var(--ease-enter) infinite; }
+.track__slot--try { background: var(--accent-tint); border: 2px dashed var(--accent); color: var(--text); animation: try-move 4s var(--ease-in-out) infinite; }
 .try-clash, .try-ok { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 0 .4rem; }
 .try-clash { background: #fdeceb; color: var(--rejected); animation: fade-clash 4s linear infinite; }
 .try-ok { background: var(--accent); color: #fff; animation: fade-ok 4s linear infinite; }

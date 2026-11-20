@@ -15,7 +15,7 @@
   --cancelled: #8a8a8a;
 
   --display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
-  --ease: cubic-bezier(.2, .8, .2, 1);
+  --ease: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   --bs-body-bg: var(--bg);
   --bs-body-color: var(--text);
@@ -64,7 +64,7 @@ a { text-underline-offset: 3px; }
 
 /* cards */
 .vb-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 1.4rem; height: 100%; transition: border-color .18s var(--ease), transform .18s var(--ease), box-shadow .18s var(--ease); }
-.vb-card:has(a):hover { border-color: var(--text); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17,17,17,.08); }
+@media (hover: hover) and (pointer: fine) { .vb-card:has(a):hover { border-color: var(--text); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(17,17,17,.08); } }
 .step-num { width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--text); color: #fff; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-bottom: .8rem; }
 .venue-meta { color: var(--muted); font-size: .9rem; }
 .chip { display: inline-block; font-size: .75rem; font-weight: 600; padding: .15rem .6rem; border-radius: 999px; border: 1px solid var(--border); background: var(--bg); }
@@ -124,13 +124,13 @@ a { text-underline-offset: 3px; }
 /* display face */
 h1, h2, .page-head h1, .vb-nav .navbar-brand { font-family: var(--display); }
 
-/* hover and press layer: buttons step 1px up, press sinks 1px and scales .985 */
+/* hover and press layer: buttons step 1px up, press sinks 1px and scales .97 */
 .btn { transition: background-color .15s var(--ease), border-color .15s var(--ease), color .15s var(--ease), transform .12s var(--ease); }
 @media (hover: hover) and (pointer: fine) {
   .btn:hover { transform: translateY(-1px); }
   .btn-xl:hover { transform: translateY(-2px); }
 }
-.btn:active { transform: translateY(1px) scale(.985); transition-duration: .09s; }
+.btn:active { transform: translateY(1px) scale(.97); transition-duration: .09s; }
 .btn-xl { font-size: 1.15rem; padding: .95rem 2rem; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
@@ -149,19 +149,18 @@ h1, h2, .page-head h1, .vb-nav .navbar-brand { font-family: var(--display); }
 .page-head { padding: 3rem 0 1.6rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
 .page-head h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.035em; line-height: 1.02; font-size: clamp(2.2rem, 5vw, 3.6rem); }
 .page-head .eyebrow { margin-bottom: .5rem !important; }
-.page-head > *, .page-head > div > * { animation: rise .6s var(--ease-enter, cubic-bezier(.22,1,.36,1)) backwards; }
-.page-head > :nth-child(2), .page-head > div > :nth-child(2) { animation-delay: 90ms; }
-.page-head > :nth-child(3) { animation-delay: 180ms; }
+/* inner pages are tools people open many times a day: headings do not animate in */
 
 /* cards: one style. Linked cards carry an arrow that steps 3px on hover */
 .vb-card h5, .vb-card .h5 { font-family: var(--display); font-weight: 700; font-size: 1.3rem; letter-spacing: -.02em; }
 .vb-card { position: relative; }
 .vb-card:has(.stretched-link)::after { content: "\2192"; position: absolute; top: 1.2rem; right: 1.3rem; font-weight: 700; color: var(--text); transition: transform .18s var(--ease), color .18s var(--ease); }
-.vb-card:has(.stretched-link):hover::after { transform: translateX(3px); color: var(--accent); }
+@media (hover: hover) and (pointer: fine) { .vb-card:has(.stretched-link):hover::after { transform: translateX(3px); color: var(--accent); } }
 .vb-card .kv { margin-bottom: 0; }
 
 /* tool cards (forms): the offset-shadow frame from the landing page */
-.auth-card, form.vb-card { border: 1px solid var(--text); border-radius: 16px; box-shadow: 8px 8px 0 var(--text); background: var(--bg); animation: settle .7s var(--ease-enter, cubic-bezier(.22,1,.36,1)) backwards; }
+.auth-card, form.vb-card { border: 1px solid var(--text); border-radius: 16px; box-shadow: 8px 8px 0 var(--text); background: var(--bg); }
+.auth-card { animation: settle .45s var(--ease) backwards; }
 .auth-card h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.03em; font-size: 2rem; }
 form.vb-card:hover { transform: none; box-shadow: 8px 8px 0 var(--text); border-color: var(--text); }
 .form-label { font-size: .85rem; font-weight: 700 !important; letter-spacing: .01em; }
