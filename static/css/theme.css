@@ -509,12 +509,17 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 /* ---- heavy glass nav, on every page ----
    A glass pill needs something to bend, so every page gets a faint fixed backdrop (warm bloom, cool bloom, dot grid) behind it. */
 body::before { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: radial-gradient(46vmax 46vmax at 92% -8%, rgba(255,106,0,.20), transparent 70%), radial-gradient(40vmax 40vmax at 4% 14%, rgba(17,17,17,.10), transparent 70%), radial-gradient(rgba(17,17,17,.085) 1px, transparent 1.3px) 0 0 / 22px 22px; }
-body:has(.home-hero)::before { display: none; }
+  background:
+    radial-gradient(46vmax 46vmax at 92% -8%, rgba(255,106,0,.18), transparent 70%), radial-gradient(40vmax 40vmax at 4% 14%, rgba(17,17,17,.08), transparent 70%), radial-gradient(rgba(17,17,17,.085) 1px, transparent 1.3px) 0 0 / 22px 22px; }
+/* a colour band pinned to the top of the viewport so the nav always has something to bend */
+body::after { content: ""; position: fixed; left: 0; right: 0; top: 0; height: 190px; z-index: -1; pointer-events: none;
+  background: linear-gradient(90deg, rgba(255,106,0,.34) 0%, rgba(255,106,0,0) 26%, rgba(17,17,17,.20) 50%, rgba(255,106,0,0) 72%, rgba(255,106,0,.30) 100%);
+  -webkit-mask-image: linear-gradient(180deg, #000 30%, transparent); mask-image: linear-gradient(180deg, #000 30%, transparent); }
+body:has(.home-hero)::before, body:has(.home-hero)::after { display: none; }
 .vb-nav .container {
-  background: linear-gradient(180deg, rgba(255,255,255,.62), rgba(255,255,255,.30));
-  -webkit-backdrop-filter: blur(30px) saturate(190%) brightness(1.04); backdrop-filter: blur(30px) saturate(190%) brightness(1.04);
-  border: 1px solid rgba(255,255,255,.7);
+  background: linear-gradient(180deg, rgba(255,255,255,.34), rgba(255,255,255,.12));
+  -webkit-backdrop-filter: blur(24px) saturate(210%) brightness(1.02); backdrop-filter: blur(24px) saturate(210%) brightness(1.02);
+  border: 1px solid rgba(255,255,255,.55);
   box-shadow: 0 0 0 1px rgba(17,17,17,.09), inset 0 1px 0 rgba(255,255,255,.95), inset 0 -1px 0 rgba(17,17,17,.06), inset 0 0 22px rgba(255,255,255,.35), 0 2px 4px rgba(17,17,17,.06), 0 24px 46px -16px rgba(17,17,17,.42); }
 @supports not (backdrop-filter: blur(1px)) { .vb-nav .container { background: rgba(255,255,255,.94); } }
 
