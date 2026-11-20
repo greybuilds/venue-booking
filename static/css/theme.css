@@ -16,8 +16,17 @@
   --bs-body-color: var(--text);
   --bs-link-color: var(--text);
   --bs-link-hover-color: var(--accent);
+  --bs-link-color-rgb: 17, 17, 17;
+  --bs-link-hover-color-rgb: 255, 106, 0;
   --bs-border-color: var(--border);
 }
+
+/* flash messages: plain surface with a status-coloured left edge, no Bootstrap blue */
+.alert { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-left: 4px solid var(--text); border-radius: 6px; }
+.alert-success { border-left-color: var(--confirmed); }
+.alert-info { border-left-color: var(--accent); }
+.alert-warning { border-left-color: var(--pending); }
+.alert-danger { background: #fdeceb; border-color: #f3c6c3; border-left-color: var(--rejected); }
 
 body { font-family: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
 a { text-underline-offset: 3px; }
