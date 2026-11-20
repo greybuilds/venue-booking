@@ -1,5 +1,4 @@
 /* Home page. Motion follows the taste rules: transform and opacity only, one cycle 2.5-4s, nothing moves on scroll except the one dealt moment. */
-:root { --ease-enter: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1); }
 
 /* ---- hero: alone on the first screen ---- */
 .home-hero { min-height: calc(100svh - 72px); display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; padding: 3rem 0; }
@@ -8,10 +7,12 @@
 .home-hero__actions { display: flex; align-items: center; gap: 1.6rem; flex-wrap: wrap; margin-top: 2rem; }
 
 /* entrance: once on load */
-@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes settle { from { transform: scale(.98); } to { transform: none; } }
-[data-rise] { animation: rise .6s var(--ease-enter) both; animation-delay: calc(var(--i) * 90ms); }
-[data-settle] { animation: settle .9s var(--ease-enter) both; }
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } }
+@keyframes settle { from { opacity: 0; transform: translateY(10px) scale(.985); } }
+@keyframes fade { from { opacity: 0; } }
+/* backwards fill, so button hover transforms work once the entrance ends */
+[data-rise] { animation: rise .5s var(--ease) backwards; animation-delay: var(--d, 0ms); }
+[data-settle] { animation: settle .7s var(--ease) 220ms backwards; }
 
 /* ---- the live app frame: Roomly's own day view catching a clash ---- */
 .app-frame { background: var(--bg); border: 1px solid var(--text); border-radius: 16px; box-shadow: 10px 10px 0 var(--text); overflow: hidden; }
@@ -84,7 +85,7 @@
   .moment { height: 150vh; }
 }
 @media (prefers-reduced-motion: reduce) {
-  [data-rise], [data-settle] { animation: none; }
+  [data-rise], [data-settle] { animation: fade .3s ease backwards; animation-delay: 0ms; }
   .track__slot--try { animation: none; transform: translateX(75%); }
   .try-clash, .verdict__msg--1, .verdict__msg--2 { animation: none; opacity: 0; }
   .try-ok, .verdict__msg--3 { animation: none; opacity: 1; }

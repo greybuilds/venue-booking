@@ -6,10 +6,10 @@
 {% block content %}
 <section class="home-hero" aria-labelledby="hero-h">
   <div class="home-hero__text">
-    <p class="eyebrow" data-rise style="--i:0">For university societies</p>
-    <h1 id="hero-h" data-rise style="--i:1">Room booking for university societies</h1>
-    <p class="home-hero__lead" data-rise style="--i:2">Pick a venue and a time. Clashes, opening hours and weekly limits are checked the moment you submit, and the nearest free slots come back with the answer.</p>
-    <div class="home-hero__actions" data-rise style="--i:3">
+    <p class="eyebrow" data-rise style="--d:0ms">For university societies</p>
+    <h1 id="hero-h" data-rise style="--d:80ms">Room booking for university societies</h1>
+    <p class="home-hero__lead" data-rise style="--d:150ms">Pick a venue and a time. Clashes, opening hours and weekly limits are checked the moment you submit, and the nearest free slots come back with the answer.</p>
+    <div class="home-hero__actions" data-rise style="--d:200ms">
       <a href="{% url 'book' %}" class="btn btn-accent">Book a venue</a>
       <a href="{% url 'venue_list' %}" class="link-draw">Browse {{ venue_count }} venue{{ venue_count|pluralize }}</a>
     </div>
