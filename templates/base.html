@@ -24,10 +24,12 @@
 <body>
 
     <!-- Navigation Bar -->
+    {% with u=request.resolver_match.url_name %}
     <nav class="d-print-none navbar navbar-expand-lg vb-nav">
         <div class="container">
 
-            <a class="navbar-brand" href="/">
+            <a class="navbar-brand" href="/" aria-label="Roomly home">
+                <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><rect x="1.5" y="3.5" width="14" height="7.5" rx="2.2"/><rect x="8.5" y="13" width="14" height="7.5" rx="2.2"/></svg>
                 Room<span class="dot">ly</span>
             </a>
 
@@ -45,29 +47,35 @@
 
             <div class="collapse navbar-collapse" id="navbarContent">
 
-                <ul class="navbar-nav ms-auto align-items-lg-center gap-lg-1">
-                    <li class="nav-item"><a class="nav-link" href="{% url 'venue_list' %}">Venues</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'society_list' %}">Societies</a></li>
+                <ul class="navbar-nav vb-links" data-navtrack>
+                    <li class="nav-item"><a class="nav-link{% if u == 'venue_list' or u == 'venue_detail' %} active{% endif %}" href="{% url 'venue_list' %}">Venues</a></li>
+                    <li class="nav-item"><a class="nav-link{% if u == 'society_list' or u == 'society_detail' %} active{% endif %}" href="{% url 'society_list' %}">Societies</a></li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'my_bookings' %}">My bookings</a></li>
+                        <li class="nav-item"><a class="nav-link{% if u == 'my_bookings' or u == 'booking_detail' %} active{% endif %}" href="{% url 'my_bookings' %}">My bookings</a></li>
                         {% if user.role == "ADMIN" or user.is_superuser %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'manage' %}">Approvals</a></li>
+                        <li class="nav-item"><a class="nav-link{% if u == 'manage' %} active{% endif %}" href="{% url 'manage' %}">Approvals</a></li>
                         {% endif %}
-                        <li class="nav-item"><a class="btn btn-accent btn-sm ms-lg-2" href="{% url 'book' %}">Book a venue</a></li>
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav vb-actions ms-lg-auto align-items-lg-center">
+                    {% if user.is_authenticated %}
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}
-                                <button class="nav-link btn btn-link" type="submit">Log out ({{ user.username }})</button>
+                                <button class="nav-link btn btn-link" type="submit">Log out <span class="who">{{ user.username }}</span></button>
                             </form>
                         </li>
+                        <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'book' %}">Book a venue</a></li>
                     {% else %}
-                        <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Log in</a></li>
-                        <li class="nav-item"><a class="btn btn-accent btn-sm ms-lg-2" href="{% url 'signup' %}">Sign up</a></li>
+                        <li class="nav-item"><a class="nav-link{% if u == 'login' %} active{% endif %}" href="{% url 'login' %}">Log in</a></li>
+                        <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'signup' %}">Sign up</a></li>
                     {% endif %}
                 </ul>
 
             </div>
         </div>
     </nav>
+    {% endwith %}
 
 
     <!-- Main Page Content -->
@@ -117,6 +125,8 @@
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
 
+    {% load static %}
+    <script src="{% static 'js/nav.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
 
 </body>

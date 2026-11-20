@@ -47,7 +47,7 @@
 
 /* ---- the one dealt moment: the rules sentence lights up word by word as its own section scrolls ---- */
 .moment { height: 190vh; border-top: 1px solid var(--border); }
-.moment__stick { position: sticky; top: 0; height: 100svh; display: flex; align-items: center; }
+.moment__stick { position: sticky; top: 72px; height: calc(100svh - 72px); display: flex; align-items: center; }
 .moment__text { font-family: var(--display); font-size: clamp(1.9rem, 4.4vw, 3.6rem); font-weight: 600; letter-spacing: -.03em; line-height: 1.12; max-width: 62rem; margin: 0; }
 .js-moment .moment__text .w { color: #c9c9c4; }
 .js-moment .moment__text .w.lit { color: var(--text); }
