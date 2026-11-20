@@ -67,6 +67,9 @@ a { text-underline-offset: 3px; }
   .vb-actions { margin-top: .6rem; padding-top: .6rem; border-top: 1px solid var(--border); gap: .3rem; }
   .vb-actions .btn-accent { width: 100%; padding: .7rem; }
 }
+.vb-nav .navbar-toggler { border-color: var(--border); border-radius: 10px; padding: .4rem .55rem; }
+.vb-nav .navbar-toggler:focus { box-shadow: none; }
+.vb-nav .navbar-toggler:focus-visible { box-shadow: 0 0 0 3px var(--accent-tint); outline: 2px solid var(--accent); outline-offset: 1px; }
 .vb-nav .who { color: var(--muted); font-weight: 500; margin-left: .15rem; }
 .vb-nav .nav-link.active:hover { color: #fff; }
 
