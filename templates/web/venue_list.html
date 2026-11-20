@@ -2,32 +2,37 @@
 {% block title %}Venues | Roomly{% endblock %}
 {% block content %}
 <div class="page-head"><p class="eyebrow mb-1">Browse</p><h1>Venues</h1></div>
-<form class="row g-2 mb-4" method="get">
-  <div class="col-md-4"><input class="form-control" name="q" value="{{ q }}" placeholder="Search name or building"></div>
-  <div class="col-md-3">
-    <select class="form-select" name="kind">
+<form class="filterbar" method="get">
+  <input class="form-control" name="q" value="{{ q }}" placeholder="Search name or building">
+  <select class="form-select" name="kind">
       <option value="">All types</option>
       <option value="classroom" {% if kind == "classroom" %}selected{% endif %}>Classrooms</option>
       <option value="lab" {% if kind == "lab" %}selected{% endif %}>Labs</option>
       <option value="hall" {% if kind == "hall" %}selected{% endif %}>Seminar halls</option>
-    </select>
-  </div>
-  <div class="col-md-3"><input class="form-control" type="number" min="1" name="seats" value="{{ seats }}" placeholder="Min seats"></div>
-  <div class="col-md-2"><button class="btn btn-ink w-100">Filter</button></div>
+  </select>
+  <input class="form-control" type="number" min="1" name="seats" value="{{ seats }}" placeholder="Min seats">
+  <button class="btn btn-ink">Filter</button>
 </form>
+<p class="result-line"><b>{{ venues|length }}</b> venue{{ venues|length|pluralize }}</p>
 <div class="row g-3">
   {% for v, k in venues %}
   <div class="col-md-6 col-lg-4">
-    <div class="vb-card">
-      <div class="venue-meta text-uppercase small fw-bold mb-1">{{ k }}</div>
-      <h5 class="mb-1"><a class="stretched-link text-decoration-none" href="{% url 'venue_detail' v.pk %}">{{ v.name }}</a></h5>
-      <div class="venue-meta mb-3">{{ v.building }}, floor {{ v.floor }}</div>
-      <div class="daybar mb-3" style="--o:{{ v.opens_at.hour }};--c:{{ v.closes_at.hour }}" aria-hidden="true"><i></i></div>
-      <div class="d-flex flex-wrap gap-2">
-        <span class="chip">{{ v.capacity }} seats</span>
-        <span class="chip">{{ v.opens_at|time:"H:i" }}&ndash;{{ v.closes_at|time:"H:i" }}</span>
-        <span class="chip">max {{ v.max_hours }}h</span>
-        {% if v.requires_approval %}<span class="chip approval">Needs approval</span>{% else %}<span class="chip">Instant</span>{% endif %}
+    <div class="vb-card vcard">
+      <div class="vcard__top">
+        <div class="vcard__seats" aria-label="{{ v.capacity }} seats"><b>{{ v.capacity }}</b><small>seats</small></div>
+        <div>
+          <div class="vcard__kind">{{ k }}</div>
+          <h5><a class="stretched-link text-decoration-none" href="{% url 'venue_detail' v.pk %}">{{ v.name }}</a></h5>
+          <div class="venue-meta">{{ v.building }}, floor {{ v.floor }}</div>
+        </div>
+      </div>
+      <div>
+        <div class="daybar" style="--o:{{ v.opens_at.hour }};--c:{{ v.closes_at.hour }}" aria-hidden="true"><i></i></div>
+        <div class="vcard__hours"><span>06:00</span><span>Open {{ v.opens_at|time:"H:i" }}&ndash;{{ v.closes_at|time:"H:i" }}</span><span>24:00</span></div>
+      </div>
+      <div class="vcard__foot">
+        {% if v.requires_approval %}<span class="needs"><i></i>Needs approval</span>{% else %}<span><i></i>Instant booking</span>{% endif %}
+        <em>max {{ v.max_hours }}h</em>
       </div>
     </div>
   </div>

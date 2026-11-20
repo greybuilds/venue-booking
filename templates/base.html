@@ -58,7 +58,7 @@
                     {% endif %}
                 </ul>
 
-                <ul class="navbar-nav vb-actions ms-lg-auto align-items-lg-center">
+                <ul class="navbar-nav vb-actions ms-lg-auto align-items-lg-center" data-navtrack>
                     {% if user.is_authenticated %}
                         <li class="nav-item">
                             <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}

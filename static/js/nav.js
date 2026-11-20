@@ -1,7 +1,5 @@
 /* Nav: the dashed "request" block follows the hovered or focused link, like the demo's slot. Desktop only; mobile gets plain rows. */
-(() => {
-  const track = document.querySelector('[data-navtrack]');
-  if (!track) return;
+document.querySelectorAll('[data-navtrack]').forEach((track) => {
   const links = [...track.querySelectorAll('.nav-link')];
   const point = (el) => {
     const first = !track.classList.contains('is-on');
@@ -19,7 +17,7 @@
   });
   track.addEventListener('pointerleave', off);
   track.addEventListener('focusout', (e) => { if (!track.contains(e.relatedTarget)) off(); });
-})();
+});
 
 /* Condense the pill after the first screen of scrolling (desktop). */
 (() => {
