@@ -44,13 +44,11 @@
   </div>
 </section>
 
-<section class="moment" id="rules" aria-labelledby="moment-h" data-moment>
+<section class="moment" id="rules" aria-labelledby="moment-h">
   <div class="moment__stick">
-    <h2 id="moment-h" class="moment__text" data-words>Every request is checked against opening hours, clashes, booking length and your society's weekly limit before an admin ever sees it.</h2>
+    <h2 id="moment-h" class="moment__text">Every request is checked against opening hours, clashes, booking length and your society's weekly limit before an admin ever sees it.</h2>
   </div>
 </section>
-
-<div class="art-band" data-art="gates" aria-hidden="true"></div>
 
 <section class="home-block" id="how" aria-labelledby="how-h">
   <div class="home-split">
@@ -89,10 +87,9 @@
 </section>
 
 <section class="home-close" aria-labelledby="close-h">
-  <div class="art-dial" data-art="dial" aria-hidden="true"></div>
   <h2 id="close-h">Your next society event needs a room.</h2>
   <a href="{% url 'book' %}" class="btn btn-accent btn-xl">Book a venue</a>
 </section>
 
 {% endblock %}
-{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
+{% block extra_js %}<script src="{% static 'js/home.js' %}" defer></script>{% endblock %}

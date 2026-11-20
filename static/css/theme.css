@@ -205,10 +205,10 @@ h1, h2, .page-head h1, .vb-nav .navbar-brand { font-family: var(--display); }
 .vb-card .kv { margin-bottom: 0; }
 
 /* tool cards (forms): the offset-shadow frame from the landing page */
-.auth-card, form.vb-card { border: 1px solid var(--text); border-radius: 16px; box-shadow: 8px 8px 0 var(--text); background: var(--bg); }
+.auth-card, form.vb-card { border: 1px solid var(--text); border-radius: 16px; background: var(--bg); }
 .auth-card { animation: settle .45s var(--ease) backwards; }
 .auth-card h1 { font-family: var(--display); font-weight: 700; letter-spacing: -.03em; font-size: 2rem; }
-form.vb-card:hover { transform: none; box-shadow: 8px 8px 0 var(--text); border-color: var(--text); }
+form.vb-card:hover { transform: none; border-color: var(--text); }
 .form-label { font-size: .85rem; font-weight: 700 !important; letter-spacing: .01em; }
 .form-control, .form-select { padding: .65rem .85rem; }
 
@@ -259,11 +259,6 @@ h1 .status { font-family: var(--bs-body-font-family); font-size: .9rem; letter-s
 }
 
 /* sign-in pages: Slot Drift art beside the form on wide screens */
-.auth-split { display: grid; gap: 2rem; align-items: stretch; margin: 2.5rem auto; max-width: 1100px; }
-.auth-split .auth-card { margin: 0 auto; width: 100%; }
-.auth-art { display: none; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; min-height: 440px; background: #fff; }
-.auth-art canvas { display: block; }
-@media (min-width: 992px) { .auth-split { grid-template-columns: 1.25fr 1fr; } .auth-art { display: block; } }
 
 /* ---- browser surfaces: the parts nobody draws ---- */
 ::selection { background: var(--accent); color: #fff; }

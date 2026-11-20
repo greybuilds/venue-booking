@@ -1,8 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Sign up | Roomly{% endblock %}
 {% block content %}
-<div class="auth-split">
-<div class="auth-art" data-slot-art aria-hidden="true"></div>
+<div>
 <div class="auth-card">
   <h1 class="h3 fw-bold mb-1">Create your account</h1>
   <p class="text-muted">Students can browse and watch availability. Society presidents and VPs can book.</p>
@@ -21,7 +20,4 @@
 </div>
 </div>
 {% endblock %}
-{% block extra_js %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-{% load static %}<script src="{% static 'js/slot-art.js' %}"></script>
-{% endblock %}
+
