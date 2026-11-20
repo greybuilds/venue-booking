@@ -1,38 +1,77 @@
 {% extends "base.html" %}
-{% block title %}Roomly | Book a space on campus{% endblock %}
+{% load static %}
+{% block title %}Roomly | Room booking for university societies{% endblock %}
+{% block extra_css %}<link href="{% static 'css/home.css' %}" rel="stylesheet">{% endblock %}
 
 {% block content %}
-<section class="hero">
-  <p class="eyebrow">University societies</p>
-  <h1>Book a campus venue.<br><span class="hl">No clashes.</span></h1>
-  <p class="lead mt-3">Pick a room, pick a time, get an answer. The system checks opening hours, clashes and limits for you, so you don't have to chase anyone.</p>
-  <div class="d-flex gap-2 mt-4 flex-wrap">
-    <a href="{% url 'venue_list' %}" class="btn btn-accent">Browse venues</a>
-    <a href="#how" class="btn btn-outline-ink">How it works</a>
+<section class="home-hero" aria-labelledby="hero-h">
+  <div class="home-hero__text">
+    <p class="eyebrow" data-rise style="--i:0">For university societies</p>
+    <h1 id="hero-h" data-rise style="--i:1">Room booking for university societies</h1>
+    <p class="home-hero__lead" data-rise style="--i:2">Pick a venue and a time. Clashes, opening hours and weekly limits are checked the moment you submit, and the nearest free slots come back with the answer.</p>
+    <div class="home-hero__actions" data-rise style="--i:3">
+      <a href="{% url 'book' %}" class="btn btn-accent">Book a venue</a>
+      <a href="{% url 'venue_list' %}" class="link-draw">Browse {{ venue_count }} venue{{ venue_count|pluralize }}</a>
+    </div>
+  </div>
+
+  <div class="app-frame" data-settle aria-hidden="true">
+    <div class="app-frame__bar">
+      <span class="app-frame__title">{% if venues %}{{ venues.0.name }}{% else %}Room A-101{% endif %}</span>
+      <span class="app-frame__day">Sunday</span>
+      <button type="button" class="app-frame__pause" data-pause aria-label="Pause the demo" tabindex="-1">Pause</button>
+    </div>
+    <div class="app-frame__body">
+      <div class="track">
+        <span class="track__tick" style="left:0"></span>
+        <span class="track__tick" style="left:25%"></span>
+        <span class="track__tick" style="left:50%"></span>
+        <span class="track__tick" style="left:75%"></span>
+        <div class="track__slot track__slot--booked" style="left:0;width:16.667%">Chess</div>
+        <div class="track__slot track__slot--booked" style="left:50%;width:16.667%">Robotics</div>
+        <div class="track__slot track__slot--try" style="left:8.333%;width:16.667%">
+          <span class="try-clash">Request</span><span class="try-ok">Request</span>
+        </div>
+      </div>
+      <div class="track__labels"><span>08:00</span><span>11:00</span><span>14:00</span><span>17:00</span><span>20:00</span></div>
+      <div class="verdict">
+        <p class="verdict__msg verdict__msg--1"><b>Clash</b> with Chess Society, 08:00 to 10:00</p>
+        <p class="verdict__msg verdict__msg--2"><b>Free</b> 11:00 to 13:00. Moving your request.</p>
+        <p class="verdict__msg verdict__msg--3"><b>Confirmed</b> Coding Club, 11:00 to 13:00</p>
+      </div>
+    </div>
   </div>
 </section>
 
-<section class="section" id="how">
-  <h2 class="mb-4">How it works</h2>
-  <div class="row g-3">
-    <div class="col-md-4"><div class="vb-card"><div class="step-num">1</div><h5>Choose a venue</h5><p class="mb-0 text-muted">Classrooms, labs and seminar halls, with capacity and opening hours up front.</p></div></div>
-    <div class="col-md-4"><div class="vb-card"><div class="step-num">2</div><h5>Request a slot</h5><p class="mb-0 text-muted">Your society rep submits a time. Clashes and rule breaks are caught straight away, with nearby free slots suggested.</p></div></div>
-    <div class="col-md-4"><div class="vb-card"><div class="step-num">3</div><h5>Get confirmed</h5><p class="mb-0 text-muted">Some venues confirm instantly, others wait for an admin. Either way you get a receipt.</p></div></div>
+<section class="moment" id="rules" aria-labelledby="moment-h" data-moment>
+  <div class="moment__stick">
+    <h2 id="moment-h" class="moment__text" data-words>Every request is checked against opening hours, clashes, booking length and your society's weekly limit before an admin ever sees it.</h2>
   </div>
 </section>
 
-<section class="section" id="venues">
+<section class="home-block" id="how" aria-labelledby="how-h">
+  <div class="home-split">
+    <h2 id="how-h">Three steps, then a receipt.</h2>
+    <ol class="steps">
+      <li><span class="steps__n">1</span><div><h3>Choose a venue</h3><p>Classrooms, labs and seminar halls, with seats and opening hours up front.</p></div></li>
+      <li><span class="steps__n">2</span><div><h3>Request a slot</h3><p>Your society rep submits a time. Broken rules are listed, and free slots nearby are one click away.</p></div></li>
+      <li><span class="steps__n">3</span><div><h3>Get an answer</h3><p>Some venues confirm at once, others wait for an admin. Either way you can print a receipt.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="home-block" id="venues" aria-labelledby="venues-h">
   <div class="d-flex justify-content-between align-items-end mb-4">
-    <h2 class="mb-0">Venues</h2>
-    <a href="{% url 'venue_list' %}" class="fw-bold">See all {{ venue_count }} &rarr;</a>
+    <h2 id="venues-h" class="mb-0">Venues</h2>
+    <a href="{% url 'venue_list' %}" class="link-draw">See all {{ venue_count }}</a>
   </div>
   <div class="row g-3">
     {% for v in venues %}
     <div class="col-md-6 col-lg-4">
       <div class="vb-card">
-        <h5 class="mb-1"><a class="stretched-link text-decoration-none" href="{% url 'venue_detail' v.pk %}">{{ v.name }}</a></h5>
+        <h3 class="h5 mb-1"><a class="stretched-link text-decoration-none" href="{% url 'venue_detail' v.pk %}">{{ v.name }}</a></h3>
         <div class="venue-meta mb-3">{{ v.building }}, floor {{ v.floor }}</div>
-        <div class="d-flex flex-wrap gap-2 mb-3">
+        <div class="d-flex flex-wrap gap-2">
           <span class="chip">{{ v.capacity }} seats</span>
           <span class="chip">{{ v.opens_at|time:"H:i" }}&ndash;{{ v.closes_at|time:"H:i" }}</span>
           <span class="chip">max {{ v.max_hours }}h</span>
@@ -45,4 +84,11 @@
     {% endfor %}
   </div>
 </section>
+
+<section class="home-close" aria-labelledby="close-h">
+  <h2 id="close-h">Your next society event needs a room.</h2>
+  <a href="{% url 'book' %}" class="btn btn-accent btn-xl">Book a venue</a>
+</section>
+
 {% endblock %}
+{% block extra_js %}<script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
