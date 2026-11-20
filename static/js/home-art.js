@@ -96,7 +96,41 @@
     });
   }
 
+  function field(host) {
+    const params = { seed: 11, cell: 34, speed: 0.00035, scale: 0.0016 };
+    new p5(function (p) {
+      let t = 0;
+      p.setup = function () {
+        p.createCanvas(host.clientWidth, host.clientHeight).parent(host);
+        p.noiseSeed(params.seed); p.pixelDensity(1);
+        if (still) { draw(); p.noLoop(); }
+        pauseOffscreen(host, p);
+      };
+      function draw() {
+        p.clear();
+        p.strokeCap(p.SQUARE);
+        const c = params.cell, L = c * 0.62;
+        for (let y = c / 2; y < p.height; y += c) {
+          for (let x = c / 2; x < p.width; x += c) {
+            const n = p.noise(x * params.scale, y * params.scale, t);
+            const a = n * p.TWO_PI * 2;
+            const hot = n > 0.6, dark = n < 0.42;
+            if (hot) { p.stroke(255, 106, 0, 200); p.strokeWeight(2.5); }
+            else if (dark) { p.stroke(17, 17, 17, 95); p.strokeWeight(1.8); }
+            else { p.stroke(17, 17, 17, 44); p.strokeWeight(1.2); }
+            const dx = p.cos(a) * L / 2, dy = p.sin(a) * L / 2;
+            p.line(x - dx, y - dy, x + dx, y + dy);
+          }
+        }
+      }
+      p.draw = function () { t += params.speed * p.deltaTime; draw(); };
+      p.windowResized = function () { p.resizeCanvas(host.clientWidth, host.clientHeight); if (still) draw(); };
+    });
+  }
+
   const g = document.querySelector('[data-art="gates"]'), d = document.querySelector('[data-art="dial"]');
   if (g) gates(g);
   if (d) dial(d);
+  const f = document.querySelector('[data-art="field"]');
+  if (f) field(f);
 })();
