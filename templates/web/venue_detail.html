@@ -1,49 +1,59 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ venue.name }} | Roomly{% endblock %}
 {% block content %}
-<div class="page-head">
-  <p class="eyebrow mb-1">{{ kind }}</p>
-  <h1>{{ venue.name }}</h1>
-  <p class="text-muted mb-0">{{ venue.building }}, floor {{ venue.floor }}</p>
-</div>
-<div class="row g-4">
+<header class="dhead">
+  <div class="dhead__text">
+    <p class="eyebrow mb-2">{{ kind }}</p>
+    <h1>{{ venue.name }}</h1>
+    <p class="dhead__sub">{{ venue.building }}, floor {{ venue.floor }}</p>
+  </div>
+  <div class="dhead__art" data-art="occupancy" data-seed="{{ venue.pk }}" aria-hidden="true"></div>
+</header>
+<div class="row g-4 g-xl-5 dbody">
   <div class="col-lg-8">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h2 class="h5 fw-bold mb-0">Availability, {{ day|date:"D j M Y" }}</h2>
-      <div class="btn-group btn-group-sm">
-        <a class="btn btn-outline-ink" href="?date={{ prev|date:'Y-m-d' }}">&larr;</a>
-        <a class="btn btn-outline-ink" href="?date={{ next|date:'Y-m-d' }}">&rarr;</a>
+    <div class="dday">
+      <h2 class="dday__title">Availability, <span>{{ day|date:"D j M Y" }}</span></h2>
+      <div class="dday__nav">
+        <a class="roundbtn" href="?date={{ prev|date:'Y-m-d' }}" aria-label="Previous day"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3m4-4.5L3 8l4 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="roundbtn" href="?date={{ next|date:'Y-m-d' }}" aria-label="Next day"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 3.5 13 8l-4 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
-    <div class="timeline">
-      {% for h in hours %}<div class="tick" style="left:{{ h.left }}%"></div>{% endfor %}
-      {% for bar in bars %}
-        <div class="slot {{ bar.b.status|lower }}" style="left:{{ bar.left }}%;width:{{ bar.width }}%" title="{{ bar.b.society }} {{ bar.b.start|time:'H:i' }}-{{ bar.b.end|time:'H:i' }}">{{ bar.b.society }}</div>
-      {% endfor %}
+    <div class="tl" data-day="{{ day|date:'Y-m-d' }}" data-open="{{ venue.opens_at|time:'H:i' }}" data-close="{{ venue.closes_at|time:'H:i' }}">
+      <div class="timeline">
+        <div class="tl__lane">
+          {% for h in hours %}<div class="tick" style="--l:{{ h.left }}"></div>{% endfor %}
+          {% for bar in bars %}
+            <div class="slot {{ bar.b.status|lower }}" style="--l:{{ bar.left }};--w:{{ bar.width }};--i:{{ forloop.counter0 }}" data-l="{{ bar.left }}" data-w="{{ bar.width }}" title="{{ bar.b.society }} {{ bar.b.start|time:'H:i' }}-{{ bar.b.end|time:'H:i' }}">{{ bar.b.society }}</div>
+          {% endfor %}
+          <span class="tl__now" hidden></span>
+        </div>
+      </div>
+      <div class="tick-labels"><div class="tl__lane">{% for h in hours %}<span style="--l:{{ h.left }}">{{ h.label }}</span>{% endfor %}</div></div>
     </div>
-    <div class="tick-labels">{% for h in hours %}<span style="left:{{ h.left }}%">{{ h.label }}</span>{% endfor %}</div>
     <p class="legend"><span><i></i>Confirmed</span><span><i class="wait"></i>Waiting for approval</span><span><i class="free"></i>Free</span></p>
     {% if bars %}
-    <ul class="rows">
-      {% for bar in bars %}<li>{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }} &middot; {{ bar.b.society }} {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}
+    <ul class="bk-list">
+      {% for bar in bars %}<li class="bk-row"><span class="bk-row__time">{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }}</span><span class="bk-row__who">{{ bar.b.society }}</span> {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}
     </ul>
-    {% else %}<p class="fw-semibold">Free all day.</p>{% endif %}
+    {% else %}<p class="free-day"><i aria-hidden="true"></i>Free all day.</p>{% endif %}
   </div>
   <div class="col-lg-4">
-    <div class="vb-card">
-      <dl class="kv mb-3">
-        <dt>Capacity</dt><dd>{{ venue.capacity }} people</dd>
-        <dt>Open</dt><dd>{{ venue.opens_at|time:"H:i" }} to {{ venue.closes_at|time:"H:i" }}</dd>
-        <dt>Longest booking</dt><dd>{{ venue.max_hours }} hours</dd>
-        <dt>Gap between bookings</dt><dd>{{ venue.buffer_minutes }} min</dd>
-        <dt>Confirmation</dt><dd>{% if venue.requires_approval %}Admin approval{% else %}Instant{% endif %}</dd>
-        {% if extra.has_projector %}<dt>Extras</dt><dd>Projector</dd>{% endif %}
-        {% if extra.equipment %}<dt>Equipment</dt><dd>{{ extra.equipment }}</dd>{% endif %}
-        {% if extra.supervisor %}<dt>Supervisor</dt><dd>{{ extra.supervisor }}</dd>{% endif %}
-        {% if extra.av_kit %}<dt>AV kit</dt><dd>{{ extra.av_kit }}</dd>{% endif %}
+    <aside class="vb-card facts">
+      <div class="facts__cap"><span class="facts__num">{{ venue.capacity }}</span><span class="facts__lbl">people<br>fit in</span></div>
+      <dl class="facts__grid">
+        <div><dt>Open</dt><dd>{{ venue.opens_at|time:"H:i" }} to {{ venue.closes_at|time:"H:i" }}</dd></div>
+        <div><dt>Longest booking</dt><dd>{{ venue.max_hours }} hours</dd></div>
+        <div><dt>Gap between</dt><dd>{{ venue.buffer_minutes }} min</dd></div>
+        <div><dt>Confirmation</dt><dd>{% if venue.requires_approval %}Admin approval{% else %}Instant{% endif %}</dd></div>
+        {% if extra.has_projector %}<div><dt>Extras</dt><dd>Projector</dd></div>{% endif %}
+        {% if extra.equipment %}<div><dt>Equipment</dt><dd>{{ extra.equipment }}</dd></div>{% endif %}
+        {% if extra.supervisor %}<div><dt>Supervisor</dt><dd>{{ extra.supervisor }}</dd></div>{% endif %}
+        {% if extra.av_kit %}<div><dt>AV kit</dt><dd>{{ extra.av_kit }}</dd></div>{% endif %}
       </dl>
       <a class="btn btn-accent w-100" href="{% url 'book' %}?venue={{ venue.pk }}&date={{ day|date:'Y-m-d' }}">Book this venue</a>
-    </div>
+    </aside>
   </div>
 </div>
 {% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/detail-art.js' %}" defer></script>{% endblock %}

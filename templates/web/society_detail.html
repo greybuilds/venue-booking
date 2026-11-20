@@ -1,15 +1,37 @@
 {% extends "base.html" %}
+{% load static %}
 {% block title %}{{ society.name }} | Roomly{% endblock %}
 {% block content %}
-<div class="page-head"><p class="eyebrow mb-1">Society</p><h1>{{ society.name }}</h1>
-  {% if society.is_verified %}<span class="status status-confirmed">Verified</span>{% else %}<span class="status status-pending">Awaiting verification</span>{% endif %}</div>
-<dl class="kv">
-  <dt>President</dt><dd>{{ society.president.get_full_name|default:society.president.username }}</dd>
-  <dt>Vice president</dt><dd>{{ society.vice_president.get_full_name|default:society.vice_president.username }}</dd>
-</dl>
-<h2 class="h5 fw-bold mt-4">Upcoming confirmed bookings</h2>
-<ul class="rows">
-  {% for b in upcoming %}<li>{{ b.start|date:"D j M" }}, {{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }} at <a href="{% url 'venue_detail' b.venue.pk %}">{{ b.venue.name }}</a></li>
-  {% empty %}<li class="text-muted">None.</li>{% endfor %}
-</ul>
+<header class="dhead dhead--soc">
+  <div class="dhead__text">
+    <p class="eyebrow mb-2">Society</p>
+    <h1>{{ society.name }}</h1>
+    {% if society.is_verified %}<span class="status status-confirmed">Verified</span>{% else %}<span class="status status-pending">Awaiting verification</span>{% endif %}
+  </div>
+  <div class="dhead__art" data-art="radial" data-seed="{{ society.pk }}" data-verified="{% if society.is_verified %}1{% else %}0{% endif %}" aria-hidden="true">
+    <span class="dhead__av {% if society.is_verified %}is-ok{% endif %}">{{ society.name|slice:":1"|upper }}</span>
+  </div>
+</header>
+<section class="people" aria-label="Committee">
+  <div class="person">
+    <span class="person__av">{{ society.president.get_full_name|default:society.president.username|slice:":1"|upper }}</span>
+    <span class="person__txt"><span class="person__role">President</span><span class="person__name">{{ society.president.get_full_name|default:society.president.username }}</span></span>
+  </div>
+  <div class="person">
+    <span class="person__av person__av--b">{{ society.vice_president.get_full_name|default:society.vice_president.username|slice:":1"|upper }}</span>
+    <span class="person__txt"><span class="person__role">Vice president</span><span class="person__name">{{ society.vice_president.get_full_name|default:society.vice_president.username }}</span></span>
+  </div>
+</section>
+<section class="upcoming">
+  <h2 class="upcoming__title">Upcoming confirmed bookings {% if upcoming %}<span class="upcoming__n">{{ upcoming|length }}</span>{% endif %}</h2>
+  <ul class="bk-list bk-list--dates">
+    {% for b in upcoming %}
+    <li class="bk-row bk-row--date">
+      <span class="bk-row__date"><b>{{ b.start|date:"j" }}</b><small>{{ b.start|date:"M" }}</small></span>
+      <span class="bk-row__txt"><a class="bk-row__venue" href="{% url 'venue_detail' b.venue.pk %}">{{ b.venue.name }}</a><span class="bk-row__when">{{ b.start|date:"l" }}, {{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></span>
+    </li>
+    {% empty %}<li class="bk-empty">Nothing booked yet. <a href="{% url 'book' %}">Book a venue</a></li>{% endfor %}
+  </ul>
+</section>
 {% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/detail-art.js' %}" defer></script>{% endblock %}

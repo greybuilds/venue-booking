@@ -3,7 +3,7 @@
   if (document.querySelector('.home-hero') || !('IntersectionObserver' in window)) return;
   const main = document.getElementById('main-content');
   if (!main) return;
-  const sel = '.page-head, h1, .nav-pills, .legend, .timeline, .vb-card, .table tbody tr, form .mb-3, .alert, .receipt, .detail-list';
+  const sel = '.page-head, h1:not(.dhead h1), .nav-pills, .legend, .vb-card:not(.facts), .table tbody tr, form .mb-3, .alert, .receipt, .detail-list';
   const els = [...main.querySelectorAll(sel)].filter((e) => !e.closest('.auth-card') && !e.parentElement.closest('.rv'));
   if (!els.length) return;
   document.documentElement.classList.add('js-rv');
