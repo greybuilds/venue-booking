@@ -280,7 +280,8 @@ a { text-underline-offset: .2em; text-decoration-thickness: 1px; }
 /* page-to-page: cross-document view transition, nav stays put */
 @media (prefers-reduced-motion: no-preference) {
   @view-transition { navigation: auto; }
-  .vb-nav { view-transition-name: nav; }
+  /* named on the pill, not the nav: a view-transition-name makes its element a backdrop root, which would leave the pill's blur with nothing to see */
+  .vb-nav .container { view-transition-name: nav; }
   ::view-transition-old(root) { animation: 160ms var(--ease) both vt-out; }
   ::view-transition-new(root) { animation: 260ms var(--ease) 60ms both vt-in; }
   @keyframes vt-out { to { opacity: 0; } }
