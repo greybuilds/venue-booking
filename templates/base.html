@@ -17,7 +17,7 @@
 
     {% load static %}
     <link href="{% static 'css/theme.css' %}" rel="stylesheet">
-    <link href="{% static 'css/feel.css' %}?v=14" rel="stylesheet">
+    <link href="{% static 'css/feel.css' %}?v=17" rel="stylesheet">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -136,8 +136,8 @@
     <script src="{% static 'js/motion.js' %}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js" defer></script>
     <script src="{% static 'js/toast.js' %}" defer></script>
-    <script src="{% static 'js/sheet.js' %}" defer></script>
-    <script type="module" src="{% static 'js/numbers.js' %}"></script>
+    <script src="{% static 'js/sheet.js' %}?v=2" defer></script>
+    <script type="module" src="{% static 'js/numbers.js' %}?v=2"></script>
     {% block extra_js %}{% endblock %}
 
 </body>

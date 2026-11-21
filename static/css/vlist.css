@@ -1,7 +1,7 @@
 /* venues: a ruled list, each row shows its open hours on a 06:00-24:00 day line */
 .vlist { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
 .vrow { position: relative; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.2fr) 7rem 8.5rem; align-items: center; gap: 1.5rem; padding: 1.1rem 3.2rem 1.1rem 1.8rem; border-radius: 999px; background: var(--surface); transition: background-color .18s var(--ease), padding .18s var(--ease); }
-.vrow__name h3 { font-family: var(--display); font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; margin: 0; }
+.vrow__name :is(h2, h3) { font-family: var(--display); font-size: 1.35rem; font-weight: 700; letter-spacing: -.02em; margin: 0; }
 .vrow__name a { color: var(--text); text-decoration: none; }
 .vrow__name span { color: var(--muted); font-size: .9rem; }
 .vrow__day { position: relative; height: 1.6rem; display: flex; align-items: center; }

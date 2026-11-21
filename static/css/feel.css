@@ -96,10 +96,10 @@ number-flow { font-variant-numeric: tabular-nums; --number-flow-char-height: 1em
 .rc__head p { margin: .3rem 0 0; font-size: .85rem; color: #6b6b66; font-variant-numeric: tabular-nums; } .rc__head b { color: var(--text); letter-spacing: .03em; }
 .rc__rows { margin: 0; display: grid; gap: .65rem; }
 .rc__row { display: grid; grid-template-columns: 6.2rem 1fr; gap: .8rem; align-items: baseline; }
-.rc .rc__row dt { font-size: .82rem; font-weight: 700; color: var(--accent-hover); }
+.rc .rc__row dt { font-size: .82rem; font-weight: 700; color: var(--accent-ink); }
 .rc .rc__row dd { margin: 0; font-size: 1rem; font-weight: 500; }
 .rc__foot { margin-top: 1.3rem; padding-top: 1rem; border-top: 1.5px dashed #c9c9c4; }
-.rc__foot p { margin: 0; display: grid; gap: .15rem; font-size: .82rem; color: #6b6b66; } .rc__foot b { color: var(--accent-hover); }
+.rc__foot p { margin: 0; display: grid; gap: .15rem; font-size: .82rem; color: #6b6b66; } .rc__foot b { color: var(--accent-ink); }
 .rc__stamp { position: absolute; right: 1.3rem; bottom: 3.4rem; border: 3px solid var(--confirmed, #1a7f46); color: var(--confirmed, #1a7f46); border-radius: 10px; font: 800 1.3rem var(--display); letter-spacing: .06em; text-transform: uppercase; padding: .2rem .8rem; transform: rotate(-9deg); mix-blend-mode: multiply; animation: rc-stamp .14s cubic-bezier(.6, 0, 1, 1) .95s backwards; }
 @keyframes rc-stamp { from { opacity: 0; transform: scale(2.6) rotate(-16deg); } }
 @media (prefers-reduced-motion: reduce) { .rc__wrap, .rc__stamp { animation: none; } }
@@ -272,3 +272,14 @@ body::before, body::after { display: none; }
 .vb-card, .vb-card.scard, .vb-card.facts, .auth-card, .alert, .vb-footer__panel { border-radius: var(--r-panel); }
 .form-control, .form-select { border-radius: var(--r-field); }
 .mrow__reject .form-control { border-radius: var(--r-pill); }
+
+/* ---- verification pass ---- */
+.upcoming__n, .person__av--b { color: var(--text); }
+.roundbtn { width: 44px; height: 44px; }
+.link-draw { min-height: 44px; display: inline-flex; align-items: center; }
+.bk-empty a { color: var(--accent-ink); font-weight: 700; display: inline-flex; align-items: center; min-height: 44px; }
+.btn.btn-link { min-height: 44px; display: inline-flex; align-items: center; color: var(--text); font-weight: 700; }
+body:has(.rc) { overflow-x: clip; }
+.status-pending { color: #8a5a00; }
+.vb-toast__x { width: 44px; height: 44px; }
+.auth-card p a { min-height: 44px; align-items: center; }
