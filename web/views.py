@@ -4,7 +4,7 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.db.models import Q
+from django.db.models import Count, Q
 import json
 from urllib.parse import parse_qs, urlparse
 
@@ -84,12 +84,8 @@ def venue_list(request):
     })
 
 
-def venue_detail(request, pk):
-    venue = get_object_or_404(Venue, pk=pk)
-    try:
-        day = date_cls.fromisoformat(request.GET.get("date", ""))
-    except ValueError:
-        day = timezone.localdate()
+def _day_bars(venue, day):
+    """Booked bars and hour ticks for one venue on one day (shared by the venue page and /book/)."""
     tz = timezone.get_current_timezone()
     opens = timezone.make_aware(datetime.combine(day, venue.opens_at), tz)
     closes = timezone.make_aware(datetime.combine(day, venue.closes_at), tz)
@@ -108,6 +104,16 @@ def venue_detail(request, pk):
         if h >= opens:
             hours.append({"label": h.strftime("%H:%M"), "left": round((h - opens).total_seconds() / span * 100, 1)})
         h += timedelta(hours=1)
+    return bars, hours
+
+
+def venue_detail(request, pk):
+    venue = get_object_or_404(Venue, pk=pk)
+    try:
+        day = date_cls.fromisoformat(request.GET.get("date", ""))
+    except ValueError:
+        day = timezone.localdate()
+    bars, hours = _day_bars(venue, day)
     return render(request, "web/venue_detail.html", {
         "venue": venue, "kind": kind_of(venue), "day": day, "bars": bars, "hours": hours,
         "prev": day - timedelta(days=1), "next": day + timedelta(days=1),
@@ -132,11 +138,30 @@ def society_detail(request, pk):
 # ---- booking --------------------------------------------------------------
 
 @login_required
+def book_info(request):
+    """Rules and day timeline for the venue and date picked on /book/ (HTMX panel)."""
+    venue = Venue.objects.filter(pk=request.GET.get("venue") or 0).first()
+    try:
+        day = date_cls.fromisoformat(request.GET.get("date", ""))
+    except ValueError:
+        day = timezone.localdate()
+    ctx = {"venue": venue, "day": day}
+    if venue:
+        ctx["bars"], ctx["hours"] = _day_bars(venue, day)
+    return render(request, "web/partials/book_info.html", ctx)
+
+
+@login_required
 def book(request):
     initial = {k: request.GET[k] for k in ("venue", "date", "start_time", "end_time", "society") if k in request.GET}
     form = BookingForm(request.POST or None, initial=initial, user=request.user)
+    form.fields["date"].widget.attrs["min"] = timezone.localdate().isoformat()
+    only = list(form.fields["society"].queryset[:2])
+    if len(only) == 1 and "society" not in initial:
+        form.fields["society"].initial = only[0].pk
+        form.initial.setdefault("society", only[0].pk)
     errors, suggestions = [], []
-    can_book = form.fields["society"].queryset.exists()
+    can_book = bool(only)
     if request.method == "POST" and form.is_valid():
         d = form.cleaned_data
         try:
@@ -227,15 +252,34 @@ def cancel_booking(request, pk):
 
 # ---- admin queue ----------------------------------------------------------
 
+HISTORY = ("CANCELLED", "COMPLETED", "EXPIRED")
+
+
+def _tab_counts():
+    raw = {r["status"]: r["n"] for r in Booking.objects.values("status").annotate(n=Count("pk"))}
+    return {
+        "PENDING": raw.get("PENDING", 0), "CONFIRMED": raw.get("CONFIRMED", 0),
+        "REJECTED": raw.get("REJECTED", 0), "HISTORY": sum(raw.get(s, 0) for s in HISTORY),
+    }
+
+
 @admin_only
 def manage(request):
     status = request.GET.get("status", "PENDING")
     qs = Booking.objects.select_related("venue", "society", "booked_by").order_by("start")
-    if status in Booking.Status.values:
+    if status == "HISTORY" or status in HISTORY:
+        qs = qs.filter(status__in=HISTORY)
+        active = "HISTORY"
+    else:
+        if status not in Booking.Status.values:
+            status = "PENDING"
         qs = qs.filter(status=status)
+        active = status
+    counts = _tab_counts()
+    tabs = [(k, label, counts[k]) for k, label in
+            (("PENDING", "Pending"), ("CONFIRMED", "Confirmed"), ("REJECTED", "Rejected"), ("HISTORY", "History"))]
     return render(request, "web/manage.html", {
-        "bookings": qs, "status": status, "statuses": Booking.Status.choices,
-        "pending_count": Booking.objects.filter(status="PENDING").count(),
+        "bookings": qs, "status": active, "tabs": tabs, "pending_count": counts["PENDING"],
         "reject_form": RejectForm(),
     })
 
@@ -274,7 +318,8 @@ def _manage_htmx(request, booking, ok, msg, nxt):
     """Answer an in-place confirm/reject: the new row, or nothing if it no longer belongs in this list."""
     booking.refresh_from_db()
     shown = parse_qs(urlparse(nxt).query).get("status", ["PENDING"])[0]
-    pending = Booking.objects.filter(status="PENDING").count()
+    counts = _tab_counts()
+    pending = counts["PENDING"]
     if not ok:
         resp = HttpResponse("")
         resp["HX-Reswap"] = "none"
@@ -284,7 +329,7 @@ def _manage_htmx(request, booking, ok, msg, nxt):
         resp = render(request, "web/partials/manage_row.html", {"b": booking, "next": nxt})
     resp["HX-Trigger"] = json.dumps({
         "toast": {"msg": msg, "type": "success" if ok else "error"},
-        "pending": {"value": pending},
+        "pending": {"value": pending, "counts": counts},
     })
     return resp
 
@@ -306,7 +351,7 @@ def bad_request(request, exception):
 
 
 def csrf_failure(request, reason=""):
-    return _error(request, 403, "Session expired", "Your form timed out or the page was open too long. Reload it and send it again.", "sleepy", retry=True)
+    return _error(request, 403, "Session expired", "Your form timed out or the page was open too long. Go back, reload the form and send it again.", "sleepy", retry=True)
 
 
 def server_error(request):

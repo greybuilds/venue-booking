@@ -58,3 +58,15 @@
   dlg.addEventListener('pointerup', end);
   dlg.addEventListener('pointercancel', end);
 })();
+
+// A request made after the session ended gets the login page back. Send the whole window there
+// instead of filling the sheet (or the page) with a second site.
+document.addEventListener('htmx:beforeSwap', (e) => {
+  const url = e.detail.xhr && e.detail.xhr.responseURL;
+  if (!url) return;
+  const u = new URL(url, location.href);
+  if (u.pathname.startsWith('/login/') && !location.pathname.startsWith('/login/')) {
+    e.detail.shouldSwap = false;
+    location.assign(u.href);
+  }
+});

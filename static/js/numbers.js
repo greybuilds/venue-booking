@@ -13,6 +13,8 @@ els.forEach((el) => {
 
 document.addEventListener('pending', (e) => {
   const n = Number(e.detail && e.detail.value);
+  const counts = (e.detail && e.detail.counts) || {};
+  Object.entries(counts).forEach(([k, v]) => document.querySelectorAll('[data-tabcount="' + k + '"]').forEach((el) => { el.textContent = v; }));
   const chip = document.querySelector('[data-pending]');
   if (!chip || Number.isNaN(n)) return;
   chip.classList.toggle('is-empty', n === 0);

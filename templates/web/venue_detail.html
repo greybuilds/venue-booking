@@ -19,19 +19,7 @@
         <a class="roundbtn" href="?date={{ next|date:'Y-m-d' }}" aria-label="Next day"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 3.5 13 8l-4 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       </div>
     </div>
-    <div class="tl" data-day="{{ day|date:'Y-m-d' }}" data-open="{{ venue.opens_at|time:'H:i' }}" data-close="{{ venue.closes_at|time:'H:i' }}">
-      <div class="timeline">
-        <div class="tl__lane">
-          {% for h in hours %}<div class="tick" style="--l:{{ h.left }}"></div>{% endfor %}
-          {% for bar in bars %}
-            <div class="slot {{ bar.b.status|lower }}" style="--l:{{ bar.left }};--w:{{ bar.width }};--i:{{ forloop.counter0 }}" data-l="{{ bar.left }}" data-w="{{ bar.width }}" title="{{ bar.b.society }} {{ bar.b.start|time:'H:i' }}-{{ bar.b.end|time:'H:i' }}">{{ bar.b.society }}</div>
-          {% endfor %}
-          <span class="tl__now" hidden></span>
-        </div>
-      </div>
-      <div class="tick-labels"><div class="tl__lane">{% for h in hours %}<span style="--l:{{ h.left }}">{{ h.label }}</span>{% endfor %}</div></div>
-    </div>
-    <p class="legend"><span><i></i>Confirmed</span><span><i class="wait"></i>Waiting for approval</span><span><i class="free"></i>Free</span></p>
+    {% include "web/partials/day_timeline.html" %}
     {% if bars %}
     <ul class="bk-list">
       {% for bar in bars %}<li class="bk-row"><span class="bk-row__time">{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }}</span><span class="bk-row__who">{{ bar.b.society }}</span> {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}

@@ -1,3 +1,4 @@
+import json
 from datetime import time, timedelta
 
 from django.test import TestCase
@@ -45,6 +46,21 @@ class WebPagesTests(TestCase):
     def test_student_sees_warning_and_cannot_book(self):
         self.client.force_login(self.student)
         self.assertContains(self.client.get(reverse("book")), "Only the President or VP")
+        self.assertNotContains(self.client.get(reverse("book")), "Request booking")
+
+    def test_book_info_panel_shows_rules_and_needs_login(self):
+        self.assertEqual(self.client.get(reverse("book_info")).status_code, 302)
+        self.client.force_login(self.rep)
+        r = self.client.get(reverse("book_info"), {"venue": self.lab.pk})
+        self.assertContains(r, "Needs approval")
+        self.assertContains(r, "Up to 4 h")
+        self.assertContains(self.client.get(reverse("book_info")), "Pick a venue")
+
+    def test_single_society_is_preselected_and_date_has_min(self):
+        self.client.force_login(self.rep)
+        r = self.client.get(reverse("book"))
+        self.assertEqual(r.context["form"].initial.get("society"), self.soc.pk)
+        self.assertContains(r, 'min="%s"' % timezone.localdate().isoformat())
 
     def test_rep_books_instant_venue(self):
         self.client.force_login(self.rep)
@@ -108,7 +124,18 @@ class HtmxTests(TestCase):
         b.refresh_from_db(); self.assertEqual(b.status, "CONFIRMED")
         self.assertEqual(r.content, b"")
         self.assertIn('"type": "success"', r["HX-Trigger"])
-        self.assertIn('"pending": {"value": 0}', r["HX-Trigger"])
+        self.assertEqual(json.loads(r["HX-Trigger"])["pending"], {"value": 0, "counts": {"PENDING": 0, "CONFIRMED": 1, "REJECTED": 0, "HISTORY": 0}})
+
+    def test_manage_tabs_show_counts_and_fold_history(self):
+        b = self.pending_booking()
+        b.cancel(self.rep)
+        self.client.force_login(self.admin)
+        r = self.client.get(reverse("manage"), {"status": "CANCELLED"})
+        self.assertEqual([(k, n) for k, _, n in r.context["tabs"]],
+                         [("PENDING", 0), ("CONFIRMED", 0), ("REJECTED", 0), ("HISTORY", 1)])
+        self.assertEqual(r.context["status"], "HISTORY")
+        self.assertContains(r, 'aria-current="page"')
+        self.assertContains(r, "Chess")
 
     def test_htmx_error_swaps_nothing(self):
         b = self.pending_booking()

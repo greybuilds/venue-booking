@@ -190,3 +190,85 @@ number-flow { font-variant-numeric: tabular-nums; --number-flow-char-height: 1em
 @keyframes m-z { 0% { transform: translate(0, 10px); opacity: 0; } 25% { opacity: 1; } 100% { transform: translate(10px, -22px); opacity: 0; } }
 
 @media (prefers-reduced-motion: reduce) { .mascot *, .mascot { animation: none !important; } .m-puff, .m-z, .m-stamp { opacity: .9; } .mascot--dizzy .m-paper path { stroke-dashoffset: 0; } .mascot--search .m-hand { transform: translate(141px, 130px); } .mascot--block .m-hand { transform: translate(196px, 134px); } }
+
+/* ---- polish pass: focus, contrast, tap targets, solid nav ---- */
+:root { --accent-ink: #a63f00; }
+
+/* skip link */
+.skip-link { position: absolute; left: 1rem; top: -5rem; z-index: 2000; background: var(--text); color: #fff; padding: .75rem 1.3rem; border-radius: 999px; font-weight: 700; text-decoration: none; transition: top .15s var(--ease); }
+.skip-link:focus { top: 1rem; color: #fff; }
+
+/* one focus ring everywhere: ink, 3px, clear of the element. Bootstrap's blue glow goes. */
+a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible,
+.btn:focus-visible, .nav-link:focus-visible, .vb-avatar:focus-visible, .navbar-toggler:focus-visible, .roundbtn:focus-visible { outline: 3px solid var(--text); outline-offset: 3px; }
+.nav-link:focus-visible, .navbar-toggler:focus-visible, .navbar-toggler:focus { box-shadow: none; }
+.form-control:focus-visible, .form-select:focus-visible { outline: 3px solid var(--text); outline-offset: 2px; box-shadow: none; }
+.vb-footer__links a:focus-visible { outline-width: 3px; }
+
+/* ink on orange (6.6:1). White was 2.9:1. */
+.btn.btn-accent, .btn.btn-accent:hover, .btn.btn-accent:focus, .btn.btn-accent:active, .btn.btn-accent:disabled { color: var(--text); }
+.vb-footer__links a:hover { color: var(--text); }
+.roster__item:nth-child(3n+2) .roster__av, .roster__pill:hover .roster__av { color: var(--text); }
+
+/* small orange text on light grounds uses the darker ink-orange (6.3:1) */
+.eyebrow, .vcard__kind, .steps__n, .chip.approval, .rc dt, .rcp dt { color: var(--accent-ink); }
+.status-confirmed { color: #176b3b; }
+.status-cancelled, .status-expired { color: #6b6b6b; }
+
+/* tap targets: 44px */
+.navbar-toggler { min-width: 44px; min-height: 44px; }
+.vb-avatar { width: 44px; height: 44px; }
+.vb-links .nav-link, .vb-actions .nav-link { min-height: 44px; display: flex; align-items: center; }
+.vb-footer__links a { min-height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.vb-footer__logo { min-height: 44px; }
+.nav-pills .nav-link, .nav-tabs .nav-link, .mtabs a { min-height: 44px; display: inline-flex; align-items: center; }
+.vb-nav .navbar-brand { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* solid pill nav in place of the glass one; the page glow goes with it */
+body::before, body::after { display: none; }
+.vb-nav .container {
+  background: var(--bg); -webkit-backdrop-filter: none; backdrop-filter: none;
+  border: 1.5px solid var(--text); box-shadow: 0 4px 0 var(--text); }
+
+/* /book/: the info panel beside the form */
+.bi__title { font-size: 1.35rem; margin-bottom: .6rem; }
+.bi__title span { color: var(--muted); font-weight: 600; }
+.bi__rules { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 1rem; padding: 0; }
+.bi__rules span { border: 1.5px solid var(--text); border-radius: 999px; padding: .2rem .8rem; font-size: .85rem; font-weight: 600; }
+.bi__rules .bi__mode { background: var(--text); color: #fff; }
+.bi__rules .bi__mode.is-wait { background: var(--accent-tint); color: var(--accent-ink); border-color: var(--accent-ink); }
+.bi__empty { color: var(--muted); max-width: 26rem; margin: 0; padding-top: .5rem; }
+@media (max-width: 575.98px) { .tick-labels span:nth-child(even) { visibility: hidden; } }
+
+/* nav Sign up: a pill like Book a venue, not a rounded rectangle */
+.vb-actions .btn.btn-outline-ink { border-radius: 999px; }
+
+/* ---- /manage/ rows: soft pills like the venue list ---- */
+.nav-count { display: inline-block; min-width: 1.5rem; margin-left: .25rem; padding: 0 .4rem; border-radius: 999px; background: var(--surface); color: var(--text); font-size: .8rem; font-weight: 700; text-align: center; font-variant-numeric: tabular-nums; }
+.nav-pills .nav-link.active .nav-count { background: #fff; }
+.mrows { list-style: none; margin: 0; padding: 0; display: grid; gap: .7rem; }
+.mrows > .vb-empty { display: none; }
+.mrows > .vb-empty:only-child { display: block; }
+.mrows__empty { padding: 1.4rem 1.6rem; border-radius: 999px; background: var(--surface); color: var(--muted); }
+.mrow { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr) auto auto; gap: .6rem 1.4rem; align-items: center; padding: .8rem .9rem .8rem 1.6rem; background: var(--surface); border-radius: 999px; }
+.mrow b { display: block; font-weight: 700; }
+.mrow__when span, .mrow__what span { display: block; color: var(--muted); font-size: .88rem; font-variant-numeric: tabular-nums; }
+.mrow__what b { font-family: var(--display); font-size: 1.15rem; letter-spacing: -.01em; }
+.mrow__act { display: flex; align-items: center; gap: .6rem; justify-content: flex-end; }
+.mrow__reject { display: flex; gap: .4rem; }
+.mrow__reject .form-control { width: 12rem; border-radius: 999px; padding-inline: 1rem; }
+@media (max-width: 991.98px) {
+  .mrow { grid-template-columns: 1fr auto; border-radius: 26px; padding: 1.1rem 1.3rem; }
+  .mrow__what { grid-column: 1 / -1; order: 3; }
+  .mrow__act { grid-column: 1 / -1; order: 4; justify-content: space-between; flex-wrap: wrap; }
+  .mrow__reject { flex: 1 1 14rem; }
+  .mrow__reject .form-control { flex: 1; width: auto; }
+}
+
+/* ---- one shadow colour (ink) on panels, three radii: pill, panel, field ---- */
+:root { --r-pill: 999px; --r-panel: 22px; --r-field: 14px; }
+.vb-footer__panel, .vb-card.scard, .vb-card.facts { box-shadow: 4px 4px 0 var(--text); }
+.btn { --bs-btn-border-radius: var(--r-pill); border-radius: var(--r-pill); }
+.vb-card, .vb-card.scard, .vb-card.facts, .auth-card, .alert, .vb-footer__panel { border-radius: var(--r-panel); }
+.form-control, .form-select { border-radius: var(--r-field); }
+.mrow__reject .form-control { border-radius: var(--r-pill); }

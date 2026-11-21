@@ -3,16 +3,17 @@
 {% block content %}
 <div class="page-head"><p class="eyebrow mb-1">Admin</p><h1>Approvals <span class="chip approval{% if not pending_count %} is-empty{% endif %}" data-pending><number-flow data-n="{{ pending_count }}">{{ pending_count }}</number-flow> waiting</span></h1></div>
 <ul class="nav nav-pills mb-3">
-  {% for val, label in statuses %}<li class="nav-item"><a class="nav-link {% if status == val %}active{% endif %}" href="?status={{ val }}">{{ label }}</a></li>{% endfor %}
+  {% for val, label, n in tabs %}<li class="nav-item"><a class="nav-link {% if status == val %}active{% endif %}" href="?status={{ val }}"{% if status == val %} aria-current="page"{% endif %}>{{ label }} <span class="nav-count" data-tabcount="{{ val }}">{{ n }}</span></a></li>{% endfor %}
 </ul>
-<div class="table-responsive">
-<table class="table align-middle">
-  <thead><tr><th>When</th><th>Venue</th><th>Society</th><th>Requested by</th><th>Status</th><th></th></tr></thead>
-  <tbody>
+<datalist id="reasons">
+  <option value="Clashes with another event">
+  <option value="Venue unavailable that day">
+  <option value="Society not eligible for this venue">
+  <option value="Needs more notice">
+</datalist>
+<ul class="mrows">
   {% for b in bookings %}{% include "web/partials/manage_row.html" with next=request.get_full_path %}
   {% endfor %}
-  <tr class="vb-empty"><td colspan="6" class="text-muted">Nothing in this list.</td></tr>
-  </tbody>
-</table>
-</div>
+  <li class="mrows__empty vb-empty">{% if status == "PENDING" %}All caught up. The next request will show up here.{% else %}Nothing in this list yet.{% endif %}</li>
+</ul>
 {% endblock %}

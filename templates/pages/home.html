@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Roomly | Room booking for university societies{% endblock %}
-{% block extra_css %}<link href="{% static 'css/home.css' %}?v=14" rel="stylesheet">{% endblock %}
+{% block extra_css %}<link href="{% static 'css/vlist.css' %}?v=1" rel="stylesheet"><link href="{% static 'css/home.css' %}?v=16" rel="stylesheet">{% endblock %}
 
 {% block content %}
 <script>try{if(!sessionStorage.getItem('vb-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('has-intro');sessionStorage.setItem('vb-intro','1')}}catch(e){}</script>
@@ -22,7 +22,7 @@
     <div class="rcp__wrap" data-slip>
       <div class="rcp__slip">
         <header class="rcp__head" data-l>
-          <h3>Booking receipt</h3>
+          <h2>Booking receipt</h2>
           <p>Ref: <b data-r="ref"></b> <i>(sample data)</i></p>
         </header>
         <dl class="rcp__rows">

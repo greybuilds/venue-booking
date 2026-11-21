@@ -1,17 +1,18 @@
-<tr id="mrow-{{ b.pk }}">
-  <td>{{ b.start|date:"D j M" }}<br><span class="text-muted small">{{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></td>
-  <td>{{ b.venue.name }}</td><td>{{ b.society }}</td><td>{{ b.booked_by.username }}</td>
-  <td>{% include "web/partials/status.html" %}</td>
-  <td class="text-end">
+<li class="mrow" id="mrow-{{ b.pk }}">
+  <div class="mrow__when"><b>{{ b.start|date:"D j M" }}</b><span>{{ b.start|time:"H:i" }}&ndash;{{ b.end|time:"H:i" }}</span></div>
+  <div class="mrow__what"><b>{{ b.venue.name }}</b><span>{{ b.society }} &middot; {{ b.booked_by.get_full_name|default:b.booked_by.username }}</span></div>
+  <div class="mrow__status">{% include "web/partials/status.html" %}</div>
+  <div class="mrow__act">
     {% if b.status == "PENDING" %}
-    <form method="post" action="{% url 'manage_action' b.pk 'confirm' %}" class="d-inline"
-          hx-post="{% url 'manage_action' b.pk 'confirm' %}" hx-target="#mrow-{{ b.pk }}" hx-swap="outerHTML swap:200ms">{% csrf_token %}
-      <input type="hidden" name="next" value="{{ next }}"><button class="btn btn-sm btn-accent">Confirm</button></form>
-    <form method="post" action="{% url 'manage_action' b.pk 'reject' %}" class="d-inline-flex gap-1"
+    <form method="post" action="{% url 'manage_action' b.pk 'reject' %}" class="mrow__reject"
           hx-post="{% url 'manage_action' b.pk 'reject' %}" hx-target="#mrow-{{ b.pk }}" hx-swap="outerHTML swap:200ms">{% csrf_token %}
       <input type="hidden" name="next" value="{{ next }}">
-      <input class="form-control form-control-sm" name="reason" placeholder="Reason" required style="width:9rem">
+      <label class="visually-hidden" for="why-{{ b.pk }}">Reason for rejecting this booking</label>
+      <input class="form-control form-control-sm" id="why-{{ b.pk }}" name="reason" list="reasons" placeholder="Reason to reject" autocomplete="off" required>
       <button class="btn btn-sm btn-outline-ink">Reject</button></form>
+    <form method="post" action="{% url 'manage_action' b.pk 'confirm' %}"
+          hx-post="{% url 'manage_action' b.pk 'confirm' %}" hx-target="#mrow-{{ b.pk }}" hx-swap="outerHTML swap:200ms">{% csrf_token %}
+      <input type="hidden" name="next" value="{{ next }}"><button class="btn btn-sm btn-accent">Confirm</button></form>
     {% else %}<a class="btn btn-sm btn-outline-ink" href="{% url 'booking_detail' b.pk %}">Open</a>{% endif %}
-  </td>
-</tr>
+  </div>
+</li>

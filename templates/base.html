@@ -17,12 +17,13 @@
 
     {% load static %}
     <link href="{% static 'css/theme.css' %}" rel="stylesheet">
-    <link href="{% static 'css/feel.css' %}?v=11" rel="stylesheet">
+    <link href="{% static 'css/feel.css' %}?v=14" rel="stylesheet">
 
     {% block extra_css %}{% endblock %}
 </head>
 
 <body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <a class="skip-link" href="#main-content">Skip to content</a>
 
     <!-- Navigation Bar -->
     {% with u=request.resolver_match.url_name %}
@@ -118,7 +119,7 @@
     </div>
 
     <!-- Bottom sheet, filled by HTMX (static/js/sheet.js) -->
-    <dialog id="sheet" class="vb-sheet d-print-none" aria-labelledby="sheet-title">
+    <dialog id="sheet" class="vb-sheet d-print-none" aria-label="Details" aria-labelledby="sheet-title">
         <div class="vb-sheet__panel">
             <div class="vb-sheet__grab" aria-hidden="true"></div>
             <div class="vb-sheet__body" id="sheet-body"></div>
