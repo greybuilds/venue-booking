@@ -124,3 +124,41 @@ class HtmxTests(TestCase):
         r = self.client.get(reverse("booking_detail", args=[b.pk]), headers={"HX-Request": "true"})
         self.assertTemplateUsed(r, "web/partials/booking_sheet.html")
         self.assertNotContains(r, "<html")
+
+    def test_cancel_from_sheet_swaps_sheet_and_refreshes_list(self):
+        b = self.pending_booking()
+        r = self.client.post(reverse("cancel_booking", args=[b.pk]), headers={"HX-Request": "true"})
+        b.refresh_from_db(); self.assertEqual(b.status, "CANCELLED")
+        self.assertTemplateUsed(r, "web/partials/booking_sheet.html")
+        self.assertIn("bookings-changed", r["HX-Trigger"])
+        self.assertIn('"type": "success"', r["HX-Trigger"])
+
+    def test_manage_action_ignores_offsite_next(self):
+        b = self.pending_booking()
+        self.client.force_login(self.admin)
+        r = self.client.post(reverse("manage_action", args=[b.pk, "confirm"]), {"next": "https://evil.example/x"})
+        self.assertRedirects(r, reverse("manage"))
+
+
+class ErrorPageTests(TestCase):
+    """Every error a visitor can hit shows our page, never a bare Django one."""
+    def test_404(self):
+        r = self.client.get("/definitely-not-here/")
+        self.assertEqual(r.status_code, 404); self.assertContains(r, "Page not found", status_code=404)
+
+    def test_403_for_anonymous_on_admin_page(self):
+        r = self.client.get(reverse("manage"), follow=False)
+        self.assertIn(r.status_code, (302, 403))
+
+    def test_csrf_failure_uses_our_page(self):
+        from django.test import Client
+        r = Client(enforce_csrf_checks=True).post(reverse("login"), {"username": "x", "password": "y"})
+        self.assertContains(r, "Session expired", status_code=403)
+
+    def test_500_page(self):
+        from django.test import Client
+        from django.urls import path
+        c = Client(raise_request_exception=False)
+        with self.settings(ROOT_URLCONF="web.tests_urls"):
+            r = c.get("/boom/")
+        self.assertContains(r, "Something broke", status_code=500)

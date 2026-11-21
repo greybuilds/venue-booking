@@ -17,7 +17,7 @@
 
     {% load static %}
     <link href="{% static 'css/theme.css' %}" rel="stylesheet">
-    <link href="{% static 'css/feel.css' %}" rel="stylesheet">
+    <link href="{% static 'css/feel.css' %}?v=11" rel="stylesheet">
 
     {% block extra_css %}{% endblock %}
 </head>
@@ -61,19 +61,19 @@
 
                 <ul class="navbar-nav vb-actions ms-lg-auto align-items-lg-center" data-navtrack>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <form method="post" action="{% url 'logout' %}" class="d-inline">{% csrf_token %}
-                                <button class="nav-link btn btn-link" type="submit">Log out</button>
-                            </form>
-                        </li>
                         <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'book' %}">Book a venue</a></li>
-                        <li class="nav-item vb-me" title="Signed in as {{ user.username }}">
-                            <span class="vb-avatar" role="img" aria-label="Signed in as {{ user.username }}">{{ user.get_full_name|default:user.username|slice:":1"|upper }}</span>
-                            <span class="vb-me__name">{{ user.get_full_name|default:user.username }}</span>
+                        <li class="nav-item dropdown vb-me">
+                            <button class="vb-avatar" type="button" data-bs-toggle="dropdown" data-bs-offset="0,14" aria-expanded="false" aria-label="Account menu for {{ user.username }}">{{ user.get_full_name|default:user.username|slice:":1"|upper }}</button>
+                            <div class="dropdown-menu dropdown-menu-end vb-menu">
+                                <p class="vb-menu__who"><small>Signed in as</small><b>{{ user.get_full_name|default:user.username }}</b></p>
+                                <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+                                    <button class="vb-menu__out" type="submit">Log out</button>
+                                </form>
+                            </div>
                         </li>
                     {% else %}
                         <li class="nav-item"><a class="nav-link{% if u == 'login' %} active{% endif %}" href="{% url 'login' %}">Log in</a></li>
-                        <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'signup' %}">Sign up</a></li>
+                        <li class="nav-item"><a class="btn btn-outline-ink btn-sm" href="{% url 'signup' %}">Sign up</a></li>
                     {% endif %}
                 </ul>
 

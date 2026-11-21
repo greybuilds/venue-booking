@@ -25,6 +25,10 @@
 
   document.addEventListener('htmx:beforeRequest', (e) => { if (e.detail.target === body) opener = e.detail.elt; });
   document.addEventListener('htmx:afterSwap', (e) => { if (e.detail.target === body) open(); });
+  /* a change made inside the sheet: refresh the page behind it */
+  document.addEventListener('bookings-changed', () => {
+    if (window.htmx) htmx.ajax('GET', location.href, { target: '#main-content', select: '#main-content', swap: 'outerHTML' });
+  });
   dlg.addEventListener('cancel', (e) => { e.preventDefault(); close(); });
   dlg.addEventListener('close', () => { body.innerHTML = ''; if (opener && opener.isConnected) opener.focus({ preventScroll: true }); });
   dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target.closest('[data-sheet-close]')) close(); });

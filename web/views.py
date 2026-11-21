@@ -11,6 +11,7 @@ from urllib.parse import parse_qs, urlparse
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.decorators.http import require_POST
 
 from bookings.exceptions import BookingError, RulesFailed
@@ -197,7 +198,9 @@ def receipt(request, pk):
     if booking.status not in ("CONFIRMED", "COMPLETED"):
         messages.info(request, "A receipt is only available once a booking is confirmed.")
         return redirect("booking_detail", pk=pk)
-    return render(request, "web/receipt.html", {"booking": booking})
+    hours = booking.duration.total_seconds() / 3600
+    hours_label = f"{hours:g} hr{'s' if hours != 1 else ''}"
+    return render(request, "web/receipt.html", {"booking": booking, "hours_label": hours_label})
 
 
 @login_required
@@ -206,11 +209,19 @@ def cancel_booking(request, pk):
     booking = get_object_or_404(Booking, pk=pk)
     if not (is_admin(request.user) or _my_bookings(request.user).filter(pk=pk).exists()):
         raise Http404
+    ok, msg = True, "Booking cancelled."
     try:
         booking.cancel(request.user)
-        messages.success(request, "Booking cancelled.")
     except BookingError as e:
-        messages.error(request, str(e))
+        ok, msg = False, str(e)
+    if request.headers.get("HX-Request") == "true":
+        # the bottom sheet: show the new state in place and let the list behind it refresh
+        booking.refresh_from_db()
+        resp = render(request, "web/partials/booking_sheet.html",
+                      {"booking": booking, "can_cancel": booking.status in ("PENDING", "CONFIRMED")})
+        resp["HX-Trigger"] = json.dumps({"toast": {"msg": msg, "type": "success" if ok else "error"}, "bookings-changed": True})
+        return resp
+    (messages.success if ok else messages.error)(request, msg)
     return redirect("booking_detail", pk=pk)
 
 
@@ -250,7 +261,9 @@ def manage_action(request, pk, action):
     except BookingError as e:
         ok, msg = False, str(e)
 
-    nxt = request.POST.get("next") or "manage"
+    nxt = request.POST.get("next") or ""
+    if not url_has_allowed_host_and_scheme(nxt, allowed_hosts={request.get_host()}, require_https=request.is_secure()):
+        nxt = "manage"
     if request.headers.get("HX-Request") == "true":
         return _manage_htmx(request, booking, ok, msg, nxt)
     (messages.success if ok else messages.error)(request, msg)
@@ -276,9 +289,35 @@ def _manage_htmx(request, booking, ok, msg, nxt):
     return resp
 
 
+def _error(request, code, title, text, mood, retry=False):
+    return render(request, "web/error.html", {"code": code, "title": title, "text": text, "mood": mood, "retry": retry}, status=code)
+
+
 def not_found(request, exception):
-    return render(request, "web/error.html", {"code": 404, "text": "That page doesn't exist."}, status=404)
+    return _error(request, 404, "Page not found", "That page doesn't exist, or it has moved. Check the link, or head back to the venues.", "search")
 
 
 def forbidden(request, exception):
-    return render(request, "web/error.html", {"code": 403, "text": "You don't have access to that page."}, status=403)
+    return _error(request, 403, "No access", "Your account can't open this page. If you think it should, ask an admin.", "block")
+
+
+def bad_request(request, exception):
+    return _error(request, 400, "Bad request", "We couldn't understand that request. Go back and try again.", "confused")
+
+
+def csrf_failure(request, reason=""):
+    return _error(request, 403, "Session expired", "Your form timed out or the page was open too long. Reload it and send it again.", "sleepy", retry=True)
+
+
+def server_error(request):
+    """Last resort: never let a broken template or database turn a 500 into a blank page."""
+    try:
+        return _error(request, 500, "Something broke", "That one is on us. Try again in a moment, and tell an admin if it keeps happening.", "dizzy", retry=True)
+    except Exception:
+        return HttpResponse(
+            "<!doctype html><meta charset=utf-8><title>Something broke | Roomly</title>"
+            "<body style=\"font-family:system-ui;max-width:32rem;margin:15vh auto;padding:0 1rem\">"
+            "<h1 style=\"font-size:4rem;margin:0;color:#ff6a00\">500</h1><h2>Something broke</h2>"
+            "<p>That one is on us. Try again in a moment.</p><p><a href=\"/\">Back home</a></p>",
+            status=500,
+        )

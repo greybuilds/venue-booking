@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Roomly | Room booking for university societies{% endblock %}
-{% block extra_css %}<link href="{% static 'css/home.css' %}" rel="stylesheet">{% endblock %}
+{% block extra_css %}<link href="{% static 'css/home.css' %}?v=14" rel="stylesheet">{% endblock %}
 
 {% block content %}
+<script>try{if(!sessionStorage.getItem('vb-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('has-intro');sessionStorage.setItem('vb-intro','1')}}catch(e){}</script>
+<div class="intro" aria-hidden="true"><div class="intro__mark"><i></i><i></i></div><span class="intro__word">Room<b>ly</b></span></div>
 <div class="art-field" data-art="field" aria-hidden="true"></div>
 <section class="home-hero" aria-labelledby="hero-h">
   <div class="home-hero__text">
@@ -15,32 +17,26 @@
     </div>
   </div>
 
-  <div class="app-frame" data-settle aria-hidden="true">
-    <div class="app-frame__bar">
-      <span class="app-frame__title">{% if venues %}{{ venues.0.name }}{% else %}Room A-101{% endif %}</span>
-      <span class="app-frame__day">Sunday</span>
-      <span class="app-frame__hint" data-hint>Drag the request</span>
-      <button type="button" class="app-frame__pause" data-pause aria-label="Pause the demo" tabindex="-1">Pause</button>
-    </div>
-    <div class="app-frame__body">
-      <div class="track">
-        <div class="track__lane">
-          <span class="track__tick" style="--s:3"></span>
-          <span class="track__tick" style="--s:6"></span>
-          <span class="track__tick" style="--s:9"></span>
-          <div class="track__slot track__slot--booked" style="--s:0;--l:2">Chess</div>
-          <div class="track__slot track__slot--booked" style="--s:6;--l:2">Robotics</div>
-          <div class="track__slot track__slot--try" data-drag style="--s:1.5;--l:2">
-            <span class="try-clash">Request</span><span class="try-ok">Request</span>
-          </div>
+  <div class="rcp" data-settle data-receipt aria-hidden="true">
+    <span class="rcp__slot"></span>
+    <div class="rcp__wrap" data-slip>
+      <div class="rcp__slip">
+        <header class="rcp__head" data-l>
+          <h3>Booking receipt</h3>
+          <p>Ref: <b data-r="ref"></b> <i>(sample data)</i></p>
+        </header>
+        <dl class="rcp__rows">
+        <div class="rcp__row" data-l><dt>Society</dt><dd data-r="society"></dd></div>
+        <div class="rcp__row" data-l><dt>Booked by</dt><dd data-r="by"></dd></div>
+        <div class="rcp__row" data-l><dt>Venue</dt><dd data-r="venue"></dd></div>
+        <div class="rcp__row" data-l><dt>Date</dt><dd data-r="date"></dd></div>
+        <div class="rcp__row" data-l><dt>Time</dt><dd data-r="time"></dd></div>
+        <div class="rcp__row" data-l><dt>Purpose</dt><dd data-r="purpose"></dd></div>
+        </dl>
+        <div class="rcp__foot" data-l>
+          <svg class="rcp__qr" data-qr viewBox="0 0 25 25" shape-rendering="crispEdges"></svg>
         </div>
-      </div>
-      <div class="track__labels"><span style="--s:0">08:00</span><span style="--s:3">11:00</span><span style="--s:6">14:00</span><span style="--s:9">17:00</span><span style="--s:12">20:00</span></div>
-      <div class="verdict">
-        <p class="verdict__msg verdict__msg--1"><b>Clash</b> with Chess Society, 08:00 to 10:00</p>
-        <p class="verdict__msg verdict__msg--2"><b>Free</b> 11:00 to 13:00. Moving your request.</p>
-        <p class="verdict__msg verdict__msg--3"><b>Confirmed</b> Coding Club, 11:00 to 13:00</p>
-        <p class="verdict__live" data-live aria-live="polite"></p>
+        <span class="rcp__stamp" data-stamp>Confirmed</span>
       </div>
     </div>
   </div>
@@ -95,4 +91,4 @@
 </section>
 
 {% endblock %}
-{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home-receipt.js' %}?v=8"></script><script src="{% static 'js/home.js' %}?v=7" defer></script>{% endblock %}

@@ -1,9 +1,15 @@
 {% extends "base.html" %}
-{% block title %}{{ code }} | Roomly{% endblock %}
+{% block title %}{{ code }} {{ title }} | Roomly{% endblock %}
 {% block content %}
-<div class="py-5">
-  <div class="stat" style="font-size:clamp(5rem,16vw,10rem);line-height:1;color:var(--accent)">{{ code }}</div>
-  <p class="lead">{{ text }}</p>
-  <a href="{% url 'home' %}" class="btn btn-ink">Back home</a>
-</div>
+<section class="err">
+  <h1 class="err__code">{{ code }}</h1>
+  <div class="err__mascot">{% include "web/partials/mascot.html" %}</div>
+  <h2 class="err__title">{{ title }}</h2>
+  <p class="err__text">{{ text }}</p>
+  <div class="err__actions">
+    {% if retry %}<button type="button" class="btn btn-accent" onclick="location.reload()">Try again</button>{% else %}<a href="{% url 'home' %}" class="btn btn-accent">Back home</a>{% endif %}
+    <a href="{% url 'venue_list' %}" class="btn btn-outline-ink">Browse venues</a>
+    {% if retry %}<a href="{% url 'home' %}" class="link-draw">Back home</a>{% endif %}
+  </div>
+</section>
 {% endblock %}

@@ -1,0 +1,76 @@
+{# Roomly's two dots with a job to do. mood: search (404) | block (403) | confused (400) | dizzy (500) | sleepy (session expired). The orange dot is the hand. #}
+<svg class="mascot mascot--{{ mood }}" viewBox="0 0 300 180" width="300" height="180" role="img" aria-label="Roomly mascot">
+  <ellipse class="m-shadow" cx="70" cy="170" rx="44" ry="6" fill="#111" opacity=".12"/>
+
+  {% if mood == "search" %}
+  {# 404: tries the key in door after door; every room is empty #}
+    <g class="m-door m-door--1" transform="translate(140 84)">
+      <rect width="44" height="84" rx="8" fill="#fff1e6" stroke="#111" stroke-width="3"/>
+      <circle class="m-dust" cx="22" cy="66" r="3" fill="#ff6a00"/>
+      <rect class="m-panel" width="44" height="84" rx="8" fill="#fff" stroke="#111" stroke-width="3"/>
+      <circle class="m-knob" cx="35" cy="46" r="3.5" fill="#111"/>
+    </g>
+    <g class="m-door m-door--2" transform="translate(190 84)">
+      <rect width="44" height="84" rx="8" fill="#fff1e6" stroke="#111" stroke-width="3"/>
+      <circle class="m-dust" cx="22" cy="66" r="3" fill="#ff6a00"/>
+      <rect class="m-panel" width="44" height="84" rx="8" fill="#fff" stroke="#111" stroke-width="3"/>
+      <circle class="m-knob" cx="35" cy="46" r="3.5" fill="#111"/>
+    </g>
+    <g class="m-door m-door--3" transform="translate(240 84)">
+      <rect width="44" height="84" rx="8" fill="#fff1e6" stroke="#111" stroke-width="3"/>
+      <circle class="m-dust" cx="22" cy="66" r="3" fill="#ff6a00"/>
+      <rect class="m-panel" width="44" height="84" rx="8" fill="#fff" stroke="#111" stroke-width="3"/>
+      <circle class="m-knob" cx="35" cy="46" r="3.5" fill="#111"/>
+    </g>
+  <g class="m-body">
+    <circle cx="70" cy="112" r="48" fill="#111"/>
+    {% include "web/partials/mascot_face.html" with eyes="look" mouth="flat" %}
+  </g>
+  <g class="m-hand"><g class="m-key"><rect x="8" y="-3" width="26" height="6" rx="2" fill="#111"/><rect x="24" y="2" width="5" height="9" fill="#111"/><rect x="16" y="2" width="5" height="7" fill="#111"/></g><circle r="17" fill="#ff6a00"/></g>
+
+  {% elif mood == "block" %}
+  {# 403: the key does not fit; the door rattles and DENIED is stamped on it #}
+    <g class="m-door m-door--locked" transform="translate(200 84)">
+      <rect width="56" height="84" rx="8" fill="#fff" stroke="#111" stroke-width="3"/>
+      <g class="m-lock"><path d="M20 44v-8a8 8 0 0 1 16 0v8" fill="none" stroke="#111" stroke-width="4"/><rect x="14" y="44" width="28" height="22" rx="5" fill="#ff6a00" stroke="#111" stroke-width="3"/></g>
+    </g>
+    <g class="m-stamp"><rect x="-34" y="-13" width="68" height="26" rx="6" fill="none" stroke="#c0392b" stroke-width="3"/><text y="6" text-anchor="middle" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="16" fill="#c0392b">DENIED</text></g>
+  <g class="m-body">
+    <circle cx="70" cy="112" r="48" fill="#111"/>
+    {% include "web/partials/mascot_face.html" with eyes="look" mouth="frown" %}
+  </g>
+  <g class="m-hand"><g class="m-key"><rect x="8" y="-3" width="26" height="6" rx="2" fill="#111"/><rect x="24" y="2" width="5" height="9" fill="#111"/><rect x="16" y="2" width="5" height="7" fill="#111"/></g><circle r="17" fill="#ff6a00"/></g>
+
+  {% elif mood == "confused" %}
+  {# 400: reads a receipt, turns it the right way up, then the wrong way again #}
+    <text class="m-q" x="196" y="52" font-family="Bricolage Grotesque, sans-serif" font-weight="800" font-size="34" fill="#ff6a00">?</text>
+    <g class="m-slip" transform="translate(190 112)"><g class="m-slip-in"><rect x="-26" y="-36" width="52" height="72" rx="3" fill="#fffdf8" stroke="#111" stroke-width="3"/><path d="M-16 -22h32M-16 -10h32M-16 2h20" stroke="#111" stroke-width="3" stroke-linecap="round"/><circle cx="12" cy="20" r="6" fill="#ff6a00"/></g></g>
+  <g class="m-body">
+    <circle cx="70" cy="112" r="48" fill="#111"/>
+    {% include "web/partials/mascot_face.html" with eyes="look" mouth="wavy" %}
+  </g>
+  <g class="m-hand"><g class="m-key"><rect x="8" y="-3" width="26" height="6" rx="2" fill="#111"/><rect x="24" y="2" width="5" height="9" fill="#111"/><rect x="16" y="2" width="5" height="7" fill="#111"/></g><circle r="17" fill="#ff6a00"/></g>
+
+  {% elif mood == "dizzy" %}
+  {# 500: the printer jams and the paper curls out over the mascot #}
+    <g class="m-printer"><rect x="190" y="104" width="86" height="64" rx="12" fill="#111"/><rect x="204" y="96" width="58" height="14" rx="4" fill="#fff" stroke="#111" stroke-width="3"/><circle cx="262" cy="130" r="5" fill="#ff6a00"/><rect x="204" y="140" width="40" height="5" rx="2.5" fill="#fff"/></g>
+    <g class="m-paper" fill="none" stroke-linecap="round" stroke-linejoin="round"><path class="m-paper-edge" d="M233 100C233 44 160 36 150 74S110 34 96 50" stroke="#111" stroke-width="20" pathLength="100"/><path class="m-paper-fill" d="M233 100C233 44 160 36 150 74S110 34 96 50" stroke="#fffdf8" stroke-width="14" pathLength="100"/></g>
+    <g fill="#ff6a00"><circle class="m-puff m-puff--1" cx="222" cy="86" r="6"/><circle class="m-puff m-puff--2" cx="246" cy="84" r="8"/><circle class="m-puff m-puff--3" cx="268" cy="88" r="5"/></g>
+  <g class="m-body">
+    <circle cx="70" cy="112" r="48" fill="#111"/>
+    {% include "web/partials/mascot_face.html" with eyes="x" mouth="frown" %}
+  </g>
+  <g class="m-hand m-hand--idle"><circle r="17" fill="#ff6a00"/></g>
+
+  {% else %}
+  {# session expired: asleep on a stack of receipts while the clock runs #}
+    <g class="m-stack"><rect x="14" y="152" width="112" height="14" rx="4" fill="#fffdf8" stroke="#111" stroke-width="3"/><rect x="22" y="140" width="96" height="14" rx="4" fill="#fffdf8" stroke="#111" stroke-width="3"/></g>
+    <g class="m-clock"><circle cx="226" cy="72" r="34" fill="#fff" stroke="#111" stroke-width="4"/><path d="M226 50v4M248 72h-4M226 94v-4M204 72h4" stroke="#111" stroke-width="3" stroke-linecap="round"/><path class="m-hand-min" d="M226 72v-22" stroke="#111" stroke-width="4" stroke-linecap="round"/><path class="m-hand-hr" d="M226 72v-14" stroke="#ff6a00" stroke-width="5" stroke-linecap="round"/><circle cx="226" cy="72" r="4" fill="#111"/></g>
+    <g class="m-zs" font-family="Bricolage Grotesque, sans-serif" font-weight="800" fill="#ff6a00"><text class="m-z m-z--1" x="112" y="60" font-size="20">z</text><text class="m-z m-z--2" x="128" y="44" font-size="26">z</text></g>
+  <g class="m-body">
+    <circle cx="70" cy="112" r="48" fill="#111"/>
+    {% include "web/partials/mascot_face.html" with eyes="shut" mouth="o" %}
+  </g>
+  <g class="m-hand m-hand--idle"><circle r="17" fill="#ff6a00"/></g>
+  {% endif %}
+</svg>

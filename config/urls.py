@@ -22,5 +22,19 @@ urlpatterns = [
     path('', include('web.urls')),
 ]
 
+# dev only: look at every error page at /__errors/<400|403|404|500|csrf>/
+from django.conf import settings
+if settings.DEBUG:
+    from web import views as _v
+    urlpatterns += [
+        path('__errors/400/', lambda r: _v.bad_request(r, None)),
+        path('__errors/403/', lambda r: _v.forbidden(r, None)),
+        path('__errors/404/', lambda r: _v.not_found(r, None)),
+        path('__errors/500/', lambda r: _v.server_error(r)),
+        path('__errors/csrf/', lambda r: _v.csrf_failure(r)),
+    ]
+
 handler404 = 'web.views.not_found'
 handler403 = 'web.views.forbidden'
+handler400 = 'web.views.bad_request'
+handler500 = 'web.views.server_error'
