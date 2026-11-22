@@ -867,10 +867,10 @@ Replace the placeholders below with actual team details.
 
 | Name | Student ID | Role |
 |---|---|---|
-| Member name | Student ID | Backend and Django models |
-| Member name | Student ID | Frontend and templates |
-| Member name | Student ID | Testing and documentation |
-| Member name | Student ID | Deployment and database |
+| Shuja Ahmed | 25072 | Booking System & Integration |
+| Sarah Sarwar | 25053 | User Accounts & Societ Management |
+| Syeda Hafsa Ali | 25024 | Venue Management & Availability |
+| Khadija Shahid | 25008 | Receipts, Notifications & Admin Dashboard |
 
 ### Contribution workflow
 
