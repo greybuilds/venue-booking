@@ -88,7 +88,7 @@ number-flow { font-variant-numeric: tabular-nums; --number-flow-char-height: 1em
 .rc { max-width: 27rem; margin: 2.5rem auto 0; padding: 0; border: 0; background: none; font-family: inherit; }
 .rc__wrap { filter: drop-shadow(6px 6px 0 var(--text)); animation: rc-print .9s steps(10, end) backwards; }
 @keyframes rc-print { from { clip-path: inset(0 0 100% 0); } }
-.rc__slip { position: relative; background: #fffdf8; color: #1b1f3a; padding: 1.8rem 1.5rem 2.8rem;
+.rc__slip { position: relative; background: #fffdf8; color: #1b1f3a; padding: 1.8rem 1.5rem 6.6rem;
   -webkit-mask: linear-gradient(#000, #000) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x;
           mask: linear-gradient(#000, #000) top / 100% calc(100% - 10px) no-repeat, conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) bottom / 16px 10px repeat-x; }
 .rc__head { text-align: center; padding-bottom: 1rem; margin-bottom: 1rem; border-bottom: 1.5px dashed #c9c9c4; }
@@ -100,7 +100,7 @@ number-flow { font-variant-numeric: tabular-nums; --number-flow-char-height: 1em
 .rc .rc__row dd { margin: 0; font-size: 1rem; font-weight: 500; }
 .rc__foot { margin-top: 1.3rem; padding-top: 1rem; border-top: 1.5px dashed #c9c9c4; }
 .rc__foot p { margin: 0; display: grid; gap: .15rem; font-size: .82rem; color: #6b6b66; } .rc__foot b { color: var(--accent-ink); }
-.rc__stamp { position: absolute; right: 1.3rem; bottom: 3.4rem; border: 3px solid var(--confirmed, #1a7f46); color: var(--confirmed, #1a7f46); border-radius: 10px; font: 800 1.3rem var(--display); letter-spacing: .06em; text-transform: uppercase; padding: .2rem .8rem; transform: rotate(-9deg); mix-blend-mode: multiply; animation: rc-stamp .14s cubic-bezier(.6, 0, 1, 1) .95s backwards; }
+.rc__stamp { position: absolute; right: 1.5rem; bottom: 2.7rem; border: 3px solid var(--confirmed, #1a7f46); color: var(--confirmed, #1a7f46); border-radius: 10px; font: 800 1.3rem var(--display); letter-spacing: .06em; text-transform: uppercase; padding: .2rem .8rem; transform: rotate(-9deg); mix-blend-mode: multiply; animation: rc-stamp .14s cubic-bezier(.6, 0, 1, 1) .95s backwards; }
 @keyframes rc-stamp { from { opacity: 0; transform: scale(2.6) rotate(-16deg); } }
 @media (prefers-reduced-motion: reduce) { .rc__wrap, .rc__stamp { animation: none; } }
 @media print {
