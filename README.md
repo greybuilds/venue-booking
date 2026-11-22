@@ -883,8 +883,4 @@ Replace the placeholders below with actual team details.
 7. Request a code review.
 8. Update this README when setup or deployment steps change.
 
-## License
 
-No license has been added yet.
-
-Add one before distributing or making the project public. Suitable choices include an academic-use notice or an open-source license such as MIT, but the team must decide and include the corresponding license file.
