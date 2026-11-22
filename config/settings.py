@@ -25,6 +25,7 @@ load_dotenv(BASE_DIR / ".env")
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ["SECRET_KEY"]
 DEBUG = os.environ.get("DEBUG", "False") == "True"
+CSRF_FAILURE_VIEW = 'web.views.csrf_failure'
 
 
 ALLOWED_HOSTS = []
@@ -33,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'web',
     'django.contrib.postgres',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -140,6 +142,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
 
 
 # Email
@@ -152,3 +155,6 @@ MAILERS = {
 }
 
 AUTH_USER_MODEL = "accounts.User"
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "home"
+LOGOUT_REDIRECT_URL = "home"

@@ -1,0 +1,13 @@
+{# face on the body centred at 70,112. eyes: look | x | shut. mouth: smile | flat | frown | wavy | o #}
+<g class="m-eyes">
+  {% if eyes == "x" %}<g stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M44 96l16 16M60 96L44 112"/><path d="M80 96l16 16M96 96L80 112"/></g>
+  {% elif eyes == "shut" %}<g stroke="#fff" stroke-width="5" stroke-linecap="round" fill="none"><path d="M44 106q8 7 16 0"/><path d="M80 106q8 7 16 0"/></g>
+  {% else %}<circle cx="52" cy="104" r="11" fill="#fff"/><circle cx="88" cy="104" r="11" fill="#fff"/><circle class="m-pupil" cx="52" cy="104" r="5" fill="#111"/><circle class="m-pupil" cx="88" cy="104" r="5" fill="#111"/>{% endif %}
+</g>
+<g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round">
+  {% if mouth == "frown" %}<path d="M56 138q14-10 28 0"/>
+  {% elif mouth == "flat" %}<path d="M58 132h24"/>
+  {% elif mouth == "wavy" %}<path d="M54 132q8-6 16 0t16 0"/>
+  {% elif mouth == "o" %}<ellipse cx="70" cy="134" rx="6" ry="5" fill="#fff" stroke="none"/>
+  {% else %}<path d="M56 128q14 12 28 0"/>{% endif %}
+</g>

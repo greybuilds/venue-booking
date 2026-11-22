@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}My bookings | Roomly{% endblock %}
+{% block content %}
+<header class="dhead dhead--soc">
+  <div class="dhead__text">
+    <p class="eyebrow mb-2">Yours</p>
+    <h1>My bookings</h1>
+    <a class="btn btn-accent mt-2" href="{% url 'book' %}">New booking</a>
+  </div>
+  <div class="dhead__art" data-art="radial" data-seed="{{ request.user.pk }}" data-verified="{% if upcoming %}1{% else %}0{% endif %}" aria-hidden="true">
+    <span class="dhead__av {% if upcoming %}is-ok{% endif %}"><number-flow data-n="{{ upcoming|length }}">{{ upcoming|length }}</number-flow></span>
+  </div>
+</header>
+<section class="mb-sec">
+  <h2 class="upcoming__title">Upcoming {% if upcoming %}<span class="upcoming__n"><number-flow data-n="{{ upcoming|length }}">{{ upcoming|length }}</number-flow></span>{% endif %}</h2>
+  <ul class="mb-list">
+    {% for b in upcoming %}{% include "web/partials/booking_row.html" %}
+    {% empty %}<li class="bk-empty bk-empty--dash">No upcoming bookings. <a href="{% url 'book' %}">Book a venue</a></li>{% endfor %}
+  </ul>
+</section>
+<section class="mb-sec">
+  <h2 class="upcoming__title">Past and closed</h2>
+  <ul class="mb-list">
+    {% for b in past %}{% include "web/partials/booking_row.html" with past=True %}
+    {% empty %}<li class="bk-empty bk-empty--dash">Nothing yet.</li>{% endfor %}
+  </ul>
+</section>
+{% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/detail-art.js' %}" defer></script>{% endblock %}

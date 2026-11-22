@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>
-        {% block title %}Venue Booking System{% endblock %}
+        {% block title %}Roomly{% endblock %}
     </title>
 
     <!-- Bootstrap 5 CSS -->
@@ -15,17 +15,24 @@
         rel="stylesheet"
     >
 
+    {% load static %}
+    <link href="{% static 'css/theme.css' %}" rel="stylesheet">
+    <link href="{% static 'css/feel.css' %}?v=18" rel="stylesheet">
+
     {% block extra_css %}{% endblock %}
 </head>
 
-<body>
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+    <a class="skip-link" href="#main-content">Skip to content</a>
 
     <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    {% with u=request.resolver_match.url_name %}
+    <nav class="d-print-none navbar navbar-expand-lg vb-nav">
         <div class="container">
 
-            <a class="navbar-brand" href="/">
-                Venue Booking
+            <a class="navbar-brand" href="/" aria-label="Roomly home">
+                <svg class="brand-mark" viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg>
+                <span class="brand-word">Room<span class="dot">ly</span></span>
             </a>
 
             <button
@@ -42,52 +49,43 @@
 
             <div class="collapse navbar-collapse" id="navbarContent">
 
-                <ul class="navbar-nav ms-auto">
-
+                <ul class="navbar-nav vb-links" data-navtrack>
+                    <li class="nav-item"><a class="nav-link{% if u == 'venue_list' or u == 'venue_detail' %} active{% endif %}" href="{% url 'venue_list' %}">Venues</a></li>
+                    <li class="nav-item"><a class="nav-link{% if u == 'society_list' or u == 'society_detail' %} active{% endif %}" href="{% url 'society_list' %}">Societies</a></li>
                     {% if user.is_authenticated %}
-                        <li class="nav-item">
-                            <span class="nav-link">
-                                Welcome, {{ user.username }}
-                            </span>
+                        <li class="nav-item"><a class="nav-link{% if u == 'my_bookings' or u == 'booking_detail' %} active{% endif %}" href="{% url 'my_bookings' %}">My bookings</a></li>
+                        {% if user.role == "ADMIN" or user.is_superuser %}
+                        <li class="nav-item"><a class="nav-link{% if u == 'manage' %} active{% endif %}" href="{% url 'manage' %}">Approvals</a></li>
+                        {% endif %}
+                    {% endif %}
+                </ul>
+
+                <ul class="navbar-nav vb-actions ms-lg-auto align-items-lg-center" data-navtrack>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item"><a class="btn btn-accent btn-sm" href="{% url 'book' %}">Book a venue</a></li>
+                        <li class="nav-item dropdown vb-me">
+                            <button class="vb-avatar" type="button" data-bs-toggle="dropdown" data-bs-offset="0,14" aria-expanded="false" aria-label="Account menu for {{ user.username }}">{{ user.get_full_name|default:user.username|slice:":1"|upper }}</button>
+                            <div class="dropdown-menu dropdown-menu-end vb-menu">
+                                <p class="vb-menu__who"><small>Signed in as</small><b>{{ user.get_full_name|default:user.username }}</b></p>
+                                <form method="post" action="{% url 'logout' %}">{% csrf_token %}
+                                    <button class="vb-menu__out" type="submit">Log out</button>
+                                </form>
+                            </div>
                         </li>
                     {% else %}
-                        <li class="nav-item">
-                            <span class="nav-link">
-                                University Venue Portal
-                            </span>
-                        </li>
+                        <li class="nav-item"><a class="nav-link{% if u == 'login' %} active{% endif %}" href="{% url 'login' %}">Log in</a></li>
+                        <li class="nav-item"><a class="btn btn-outline-ink btn-sm" href="{% url 'signup' %}">Sign up</a></li>
                     {% endif %}
-
                 </ul>
 
             </div>
         </div>
     </nav>
+    {% endwith %}
 
 
     <!-- Main Page Content -->
     <main class="container my-4" id="main-content">
-
-        <!-- Django Messages -->
-        {% if messages %}
-            {% for message in messages %}
-
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
-                     role="alert">
-
-                    {{ message }}
-
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="alert"
-                        aria-label="Close"
-                    ></button>
-
-                </div>
-
-            {% endfor %}
-        {% endif %}
 
 
         <!-- Content from individual pages -->
@@ -98,20 +96,48 @@
 
 
     <!-- Footer -->
-    <footer class="bg-light text-center py-3 mt-5">
+    <footer class="d-print-none vb-footer">
         <div class="container">
-            <p class="mb-0 text-muted">
-                University Society Venue Booking System
-            </p>
+            <div class="vb-footer__panel">
+                <div class="vb-footer__brand">
+                    <a class="vb-footer__logo" href="{% url 'home' %}"><svg class="brand-mark" viewBox="0 0 24 24" width="34" height="34" aria-hidden="true"><circle cx="8.5" cy="8.5" r="6.5"/><circle cx="15.5" cy="15.5" r="6.5"/></svg><span>Room<span class="dot">ly</span></span></a>
+                    <p>Rooms for university societies. Pick a slot, get an answer.</p>
+                </div>
+                <nav class="vb-footer__links" aria-label="Footer">
+                    <a href="{% url 'venue_list' %}">Venues</a>
+                    <a href="{% url 'society_list' %}">Societies</a>
+                    <a href="{% url 'book' %}">Book a venue</a>
+                </nav>
+            </div>
         </div>
     </footer>
 
+
+    <!-- Django messages show as toasts (static/js/toast.js) -->
+    <div id="toasts" class="vb-toasts d-print-none" aria-live="polite">
+        {% for message in messages %}<div class="vb-toast vb-toast--{{ message.tags }}" role="{% if message.tags == 'error' %}alert{% else %}status{% endif %}"><span class="vb-toast__dot" aria-hidden="true"></span><span class="vb-toast__msg">{{ message }}</span><button type="button" class="vb-toast__x roundbtn" aria-label="Dismiss"><svg viewBox="0 0 16 16" width="12" height="12"><path d="M4 4l8 8M12 4l-8 8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button></div>{% endfor %}
+    </div>
+
+    <!-- Bottom sheet, filled by HTMX (static/js/sheet.js) -->
+    <dialog id="sheet" class="vb-sheet d-print-none" aria-label="Details" aria-labelledby="sheet-title">
+        <div class="vb-sheet__panel">
+            <div class="vb-sheet__grab" aria-hidden="true"></div>
+            <div class="vb-sheet__body" id="sheet-body"></div>
+        </div>
+    </dialog>
 
     <!-- Bootstrap 5 JavaScript -->
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
     </script>
 
+    {% load static %}
+    <script src="{% static 'js/nav.js' %}" defer></script>
+    <script src="{% static 'js/motion.js' %}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.4/dist/htmx.min.js" defer></script>
+    <script src="{% static 'js/toast.js' %}" defer></script>
+    <script src="{% static 'js/sheet.js' %}?v=2" defer></script>
+    <script type="module" src="{% static 'js/numbers.js' %}?v=2"></script>
     {% block extra_js %}{% endblock %}
 
 </body>

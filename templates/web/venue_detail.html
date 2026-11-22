@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ venue.name }} | Roomly{% endblock %}
+{% block content %}
+<header class="dhead">
+  <div class="dhead__text">
+    <p class="eyebrow mb-2">{{ kind }}</p>
+    <h1>{{ venue.name }}</h1>
+    <p class="dhead__sub">{{ venue.building }}, floor {{ venue.floor }}</p>
+  </div>
+  <div class="dhead__art" data-art="occupancy" data-seed="{{ venue.pk }}" aria-hidden="true"></div>
+</header>
+<div class="row g-4 g-xl-5 dbody">
+  <div class="col-lg-8">
+    <div class="dday">
+      <h2 class="dday__title">Availability, <span>{{ day|date:"D j M Y" }}</span></h2>
+      <div class="dday__nav">
+        <a class="roundbtn" href="?date={{ prev|date:'Y-m-d' }}" aria-label="Previous day"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 8H3m4-4.5L3 8l4 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+        <a class="roundbtn" href="?date={{ next|date:'Y-m-d' }}" aria-label="Next day"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 3.5 13 8l-4 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      </div>
+    </div>
+    {% include "web/partials/day_timeline.html" %}
+    {% if bars %}
+    <ul class="bk-list">
+      {% for bar in bars %}<li class="bk-row"><span class="bk-row__time">{{ bar.b.start|time:"H:i" }}&ndash;{{ bar.b.end|time:"H:i" }}</span><span class="bk-row__who">{{ bar.b.society }}</span> {% include "web/partials/status.html" with b=bar.b %}</li>{% endfor %}
+    </ul>
+    {% else %}<p class="free-day"><i aria-hidden="true"></i>Free all day.</p>{% endif %}
+  </div>
+  <div class="col-lg-4">
+    <aside class="vb-card facts">
+      <div class="facts__cap"><span class="facts__num">{{ venue.capacity }}</span><span class="facts__lbl">people<br>fit in</span></div>
+      <dl class="facts__grid">
+        <div><dt>Open</dt><dd>{{ venue.opens_at|time:"H:i" }} to {{ venue.closes_at|time:"H:i" }}</dd></div>
+        <div><dt>Longest booking</dt><dd>{{ venue.max_hours }} hours</dd></div>
+        <div><dt>Gap between</dt><dd>{{ venue.buffer_minutes }} min</dd></div>
+        <div><dt>Confirmation</dt><dd>{% if venue.requires_approval %}Admin approval{% else %}Instant{% endif %}</dd></div>
+        {% if extra.has_projector %}<div><dt>Extras</dt><dd>Projector</dd></div>{% endif %}
+        {% if extra.equipment %}<div><dt>Equipment</dt><dd>{{ extra.equipment }}</dd></div>{% endif %}
+        {% if extra.supervisor %}<div><dt>Supervisor</dt><dd>{{ extra.supervisor }}</dd></div>{% endif %}
+        {% if extra.av_kit %}<div><dt>AV kit</dt><dd>{{ extra.av_kit }}</dd></div>{% endif %}
+      </dl>
+      <a class="btn btn-accent w-100" href="{% url 'book' %}?venue={{ venue.pk }}&date={{ day|date:'Y-m-d' }}">Book this venue</a>
+    </aside>
+  </div>
+</div>
+{% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/detail-art.js' %}" defer></script>{% endblock %}

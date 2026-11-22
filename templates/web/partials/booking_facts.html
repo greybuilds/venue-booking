@@ -1,0 +1,9 @@
+<dl class="kv mb-0">
+  <dt>Society</dt><dd>{{ booking.society }}</dd>
+  <dt>Date</dt><dd>{{ booking.start|date:"l j F Y" }}</dd>
+  <dt>Time</dt><dd>{{ booking.start|time:"H:i" }} to {{ booking.end|time:"H:i" }}</dd>
+  <dt>Venue</dt><dd>{{ booking.venue.building }}, floor {{ booking.venue.floor }}</dd>
+  <dt>Requested by</dt><dd>{{ booking.booked_by.get_full_name|default:booking.booked_by.username }}</dd>
+  {% if booking.reason %}<dt>Reason</dt><dd>{{ booking.reason }}</dd>{% endif %}
+</dl>
+{% if booking.status == "PENDING" %}<p class="text-muted mt-3 mb-0">Waiting for an admin to approve this.</p>{% endif %}

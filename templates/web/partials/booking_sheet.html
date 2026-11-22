@@ -1,0 +1,11 @@
+<h2 class="vb-sheet__title" id="sheet-title">{{ booking.venue.name }} {% include "web/partials/status.html" with b=booking %}</h2>
+{% include "web/partials/booking_facts.html" %}
+<div class="vb-sheet__actions">
+  {% if booking.status == "CONFIRMED" or booking.status == "COMPLETED" %}<a class="btn btn-ink" href="{% url 'receipt' booking.pk %}">View receipt</a>{% endif %}
+  {% if can_cancel %}
+  <form method="post" action="{% url 'cancel_booking' booking.pk %}" hx-post="{% url 'cancel_booking' booking.pk %}" hx-target="#sheet-body" hx-swap="innerHTML" hx-confirm="Cancel this booking?">{% csrf_token %}
+    <button class="btn btn-outline-ink">{% if booking.status == "PENDING" %}Withdraw request{% else %}Cancel booking{% endif %}</button>
+  </form>
+  {% endif %}
+  <a class="btn btn-link" href="{% url 'booking_detail' booking.pk %}">Open page</a>
+</div>

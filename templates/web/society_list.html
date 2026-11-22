@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Societies | Roomly{% endblock %}
+{% block content %}
+<div class="page-head"><p class="eyebrow mb-1">Directory</p><h1>Societies</h1></div>
+<p class="result-line"><b>{{ societies|length }}</b> societ{{ societies|length|pluralize:"y,ies" }}</p>
+<ul class="roster">
+  {% for s in societies %}
+  <li class="roster__item">
+    <a class="roster__pill" href="{% url 'society_detail' s.pk %}">
+      <span class="roster__av" aria-hidden="true">{{ s.name|slice:":1"|upper }}</span>
+      <span class="roster__txt">
+        <span class="roster__name">{{ s.name }}</span>
+        <span class="roster__meta"><i class="roster__dot {% if s.is_verified %}is-ok{% endif %}" aria-hidden="true"></i>{{ s.president.get_full_name|default:s.president.username }} · {% if s.is_verified %}Verified{% else %}Awaiting verification{% endif %}</span>
+      </span>
+    </a>
+  </li>
+  {% empty %}<li class="text-muted">No societies registered yet.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

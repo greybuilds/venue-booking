@@ -1,0 +1,15 @@
+{% if venue %}
+<div class="bi">
+  <h2 class="bi__title">{{ venue.name }}, <span>{{ day|date:"D j M" }}</span></h2>
+  <p class="bi__rules">
+    <span>Open {{ venue.opens_at|time:"H:i" }} to {{ venue.closes_at|time:"H:i" }}</span>
+    <span>Up to {{ venue.max_hours }} h</span>
+    <span>{{ venue.capacity }} seats</span>
+    <span class="bi__mode{% if venue.requires_approval %} is-wait{% endif %}">{% if venue.requires_approval %}Needs approval{% else %}Confirms instantly{% endif %}</span>
+  </p>
+  {% include "web/partials/day_timeline.html" %}
+  {% if not bars %}<p class="free-day"><i aria-hidden="true"></i>Free all day.</p>{% endif %}
+</div>
+{% else %}
+<p class="bi__empty">Pick a venue and a date. What's already booked shows up here, so you can choose a free time.</p>
+{% endif %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Receipt RML-{{ booking.start|date:"Y" }}-{{ booking.pk|stringformat:"05d" }} | Roomly{% endblock %}
+{% block content %}
+<div class="rc">
+  <div class="rc__wrap">
+    <article class="rc__slip">
+      <header class="rc__head">
+        <h1>Booking receipt</h1>
+        <p>Ref: <b>RML-{{ booking.start|date:"Y" }}-{{ booking.pk|stringformat:"05d" }}</b></p>
+      </header>
+      <dl class="rc__rows">
+        <div class="rc__row"><dt>Society</dt><dd>{{ booking.society }}</dd></div>
+        <div class="rc__row"><dt>Booked by</dt><dd>{{ booking.booked_by.get_full_name|default:booking.booked_by.username }}</dd></div>
+        <div class="rc__row"><dt>Venue</dt><dd>{{ booking.venue.name }}</dd></div>
+        <div class="rc__row"><dt>Location</dt><dd>{{ booking.venue.building }}, floor {{ booking.venue.floor }}</dd></div>
+        <div class="rc__row"><dt>Date</dt><dd>{{ booking.start|date:"D j N Y" }}</dd></div>
+        <div class="rc__row"><dt>Time</dt><dd>{{ booking.start|time:"H:i" }} to {{ booking.end|time:"H:i" }} ({{ hours_label }})</dd></div>
+        <div class="rc__row"><dt>Issued</dt><dd>{{ booking.created_at|date:"j M Y, H:i" }}</dd></div>
+      </dl>
+      <footer class="rc__foot">
+        <p><b>Changes? Admin Office</b><span>Show this receipt at the venue.</span></p>
+      </footer>
+      <span class="rc__stamp rc__stamp--{{ booking.status|lower }}">{{ booking.get_status_display }}</span>
+    </article>
+  </div>
+</div>
+<div class="text-center d-print-none mt-4"><button class="btn btn-accent" onclick="window.print()">Print receipt</button>
+  <a class="btn btn-link" href="{% url 'booking_detail' booking.pk %}">Back</a></div>
+{% endblock %}

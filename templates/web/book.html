@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Book a venue | Roomly{% endblock %}
+{% block content %}
+<div class="page-head"><p class="eyebrow mb-1">Request</p><h1>Book a venue</h1></div>
+{% if not can_book %}
+<section class="vb-card bk-gate" style="max-width:640px">
+  <h2 class="h4">Who can book?</h2>
+  <p class="mb-3">Only the President or VP of a <strong>verified</strong> society can book a venue. You aren't one yet.</p>
+  <a class="btn btn-outline-ink" href="{% url 'society_list' %}">See societies</a>
+  <a class="link-draw ms-3" href="{% url 'venue_list' %}">Browse venues</a>
+</section>
+{% else %}
+{% if errors %}
+<div class="alert alert-danger" role="alert" tabindex="-1" id="bk-errors">
+  <strong>That booking can't go ahead:</strong>
+  <ul class="mb-0">{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+</div>
+{% endif %}
+{% if suggestions %}
+<div class="mb-3">
+  <div class="fw-bold mb-2">These nearby slots are free:</div>
+  {% for s, e in suggestions %}
+    <a class="suggest" href="?venue={{ venue_id }}&society={{ society_id }}&date={{ s|date:'Y-m-d' }}&start_time={{ s|time:'H:i' }}&end_time={{ e|time:'H:i' }}">{{ s|date:"D j M" }}, {{ s|time:"H:i" }}&ndash;{{ e|time:"H:i" }}</a>
+  {% endfor %}
+</div>
+{% endif %}
+<div class="row g-4 g-xl-5 align-items-start">
+  <div class="col-lg-6">
+    <form method="post" class="vb-card" id="bookform" novalidate>{% csrf_token %}
+      <div class="row g-3">
+        {% for f in form %}
+        <div class="{% if f.name == 'society' or f.name == 'venue' %}col-12{% else %}col-md-4{% endif %}">
+          <label class="form-label fw-semibold" for="{{ f.id_for_label }}">{{ f.label }}</label>
+          {{ f }}
+          {% for e in f.errors %}<div class="text-danger small">{{ e }}</div>{% endfor %}
+        </div>
+        {% endfor %}
+      </div>
+      <button class="btn btn-accent mt-4">Request booking</button>
+    </form>
+  </div>
+  <div class="col-lg-6">
+    <div id="book-info" hx-get="{% url 'book_info' %}" hx-trigger="load, change from:#bookform" hx-include="#id_venue, #id_date" hx-swap="innerHTML" aria-live="polite"></div>
+  </div>
+</div>
+{% endif %}
+{% endblock %}
