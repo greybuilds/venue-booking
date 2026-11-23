@@ -1,5 +1,6 @@
 from datetime import date as date_cls, datetime, timedelta
-
+from types import SimpleNamespace
+from bookings.rules import OpeningHours, BlackoutDate
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -127,6 +128,18 @@ def availability(request):
             venues = venues.filter(capacity__gte=seats)
 
         for venue in venues:
+            candidate = SimpleNamespace(
+                venue=venue,
+                start=start,
+                end=end,
+            )
+
+            try:
+                OpeningHours().validate(candidate)
+                BlackoutDate().validate(candidate)
+            except BookingError:
+                continue
+
             if venue.is_free(start, end):
                 available_venues.append(venue)
 
@@ -396,6 +409,30 @@ def blocked_date_create(request):
         "web/blocked_date_form.html",
         {"form": form},
     )
+
+@admin_only
+def blocked_date_list(request):
+    blocked_dates = BlockedDate.objects.select_related(
+        "venue", "created_by"
+    ).order_by("start")
+
+    return render(
+        request,
+        "web/blocked_date_list.html",
+        {"blocked_dates": blocked_dates},
+    )
+
+
+@admin_only
+def blocked_date_delete(request, pk):
+    blocked_date = get_object_or_404(BlockedDate, pk=pk)
+
+    if request.method == "POST":
+        blocked_date.delete()
+        messages.success(request, "Blocked date deleted successfully.")
+        return redirect("blocked_date_list")
+
+    return redirect("blocked_date_list")
 
 def society_list(request):
     return render(request, "web/society_list.html", {

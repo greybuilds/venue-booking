@@ -27,6 +27,8 @@ urlpatterns = [
     path("venues/<int:pk>/calendar/", views.venue_calendar, name="venue_calendar"),
     path("venues/<int:pk>/events/", views.venue_events, name="venue_events"),
     path("blocked-dates/add/", views.blocked_date_create, name="blocked_date_create"),
+    path("blocked-dates/", views.blocked_date_list, name="blocked_date_list"),
+    path("blocked-dates/<int:pk>/delete/", views.blocked_date_delete, name="blocked_date_delete"),
     path("calendar/", views.global_calendar, name="global_calendar"),
     path("calendar/events/", views.global_events, name="global_events"),
 ]
