@@ -1,0 +1,114 @@
+
+{% extends "base.html" %}
+
+{% block title %}Global Calendar | Roomly{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="mb-4">
+        <h1>Roomly Calendar</h1>
+        <p class="text-muted">
+            View bookings and blocked periods across all university venues.
+        </p>
+    </div>
+
+    <div id="calendar"></div>
+        <div class="mb-3" style="max-width: 350px;">
+        <label for="venueFilter" class="form-label">Filter by venue</label>
+        <select id="venueFilter" class="form-select">
+            <option value="">All venues</option>
+            {% for venue in venues %}
+                <option value="{{ venue.id }}">{{ venue.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div id="calendar"></div>
+
+</div>
+
+<style>
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .fc .fc-daygrid-event {
+        padding: 5px;
+        margin-top: 3px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: normal;
+        border-radius: 5px;
+    }
+
+    .fc .fc-event-title,
+    .fc .fc-event-time {
+        white-space: normal;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .fc .fc-button {
+        text-transform: capitalize;
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/luxon3@6.1.15/index.global.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const calendarEl = document.getElementById("calendar");
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: "dayGridMonth",
+        height: "auto",
+        timeZone: "Asia/Karachi",
+        displayEventTime: true,
+        eventDisplay: "block",
+
+        eventTimeFormat: {
+            hour: "numeric",
+            minute: "2-digit",
+            meridiem: "short"
+        },
+
+        events: {
+            url: "{% url 'global_events' %}",
+            extraParams: function() {
+                return {
+                    venue: document.getElementById("venueFilter").value
+                };
+            }
+        },
+
+        headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+
+        dayMaxEvents: 4,
+
+        eventClick: function(info) {
+            alert(
+                info.event.title +
+                "\nStart: " + info.event.start.toLocaleString()
+            );
+        }
+    });
+
+    calendar.render();
+    document.getElementById("venueFilter").addEventListener("change", function() {
+    calendar.refetchEvents();
+    });
+});
+</script>
+{% endblock %}

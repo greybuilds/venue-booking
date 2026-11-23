@@ -8,7 +8,8 @@ from django.db.models import Count, Q
 import json
 from urllib.parse import parse_qs, urlparse
 
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, JsonResponse
+from django.utils.dateparse import parse_datetime
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
@@ -18,12 +19,26 @@ from bookings.exceptions import BookingError, RulesFailed
 from bookings.models import Booking
 from bookings.services import BookingService
 from societies.models import Society
-from venues.models import Classroom, Lab, SeminarHall, Venue
+from venues.models import BlockedDate, Classroom, Lab, SeminarHall, Venue
 
-from .forms import BookingForm, RejectForm, SignUpForm
+from .forms import (
+    BookingForm,
+    RejectForm,
+    SignUpForm,
+    ClassroomForm,
+    LabForm,
+    SeminarHallForm,
+    AvailabilityForm,
+    BlockedDateForm,
+)
 
 KINDS = {"classroom": Classroom, "lab": Lab, "hall": SeminarHall}
 
+VENUE_FORMS = {
+    "classroom": ClassroomForm,
+    "lab": LabForm,
+    "hall": SeminarHallForm,
+}
 
 def is_admin(user):
     return user.is_authenticated and (user.role == "ADMIN" or user.is_superuser)
@@ -84,6 +99,192 @@ def venue_list(request):
     })
 
 
+def availability(request):
+    form = AvailabilityForm(request.GET or None)
+    available_venues = []
+    searched = bool(request.GET)
+
+    if searched and form.is_valid():
+        data = form.cleaned_data
+
+        tz = timezone.get_current_timezone()
+        start = timezone.make_aware(
+            datetime.combine(data["date"], data["start_time"]), tz
+        )
+        end = timezone.make_aware(
+            datetime.combine(data["date"], data["end_time"]), tz
+        )
+
+        kind = data.get("kind")
+        seats = data.get("seats")
+
+        if kind:
+            venues = KINDS[kind].objects.all()
+        else:
+            venues = Venue.objects.all()
+
+        if seats:
+            venues = venues.filter(capacity__gte=seats)
+
+        for venue in venues:
+            if venue.is_free(start, end):
+                available_venues.append(venue)
+
+    return render(request, "web/availability.html", {
+        "form": form,
+        "available_venues": available_venues,
+        "searched": searched,
+    })
+
+@login_required
+def venue_calendar(request, pk):
+    venue = get_object_or_404(Venue, pk=pk)
+
+    return render(request, "web/venue_calendar.html", {
+        "venue": venue,
+    })
+
+
+@login_required
+def venue_events(request, pk):
+    venue = get_object_or_404(Venue, pk=pk)
+
+    start_param = request.GET.get("start")
+    end_param = request.GET.get("end")
+
+    start = parse_datetime(start_param) if start_param else None
+    end = parse_datetime(end_param) if end_param else None
+
+    if not start or not end:
+        return JsonResponse([], safe=False)
+
+    if timezone.is_naive(start):
+        start = timezone.make_aware(start)
+
+    if timezone.is_naive(end):
+        end = timezone.make_aware(end)
+
+    events = []
+
+    bookings = Booking.objects.filter(
+        venue=venue,
+        start__lt=end,
+        end__gt=start,
+        status__in=[
+            Booking.Status.PENDING,
+            Booking.Status.CONFIRMED,
+        ],
+    )
+
+    for booking in bookings:
+        events.append({
+            "title": "Booked",
+            "start": booking.start.isoformat(),
+            "end": booking.end.isoformat(),
+        })
+
+    blocked_dates = BlockedDate.objects.filter(
+        start__lt=end,
+        end__gt=start,
+    ).filter(
+        Q(venue__isnull=True) | Q(venue=venue)
+    )
+
+    for blocked in blocked_dates:
+        venue_name = blocked.venue.name if blocked.venue else "All venues"
+
+        events.append({
+            "title": f"BLOCKED: {venue_name} - {blocked.reason}",
+            "start": blocked.start.isoformat(),
+            "end": blocked.end.isoformat(),
+            "color": "#dc3545",
+            "textColor": "#ffffff",
+            "borderColor": "#b02a37",
+            })
+
+    return JsonResponse(events, safe=False)
+
+@login_required
+def global_calendar(request):
+    venues = Venue.objects.all().order_by("name")
+
+    return render(request, "web/global_calendar.html", {
+        "venues": venues,
+    })
+
+
+
+@login_required
+def global_events(request):
+    start_param = request.GET.get("start")
+    end_param = request.GET.get("end")
+    venue_id = request.GET.get("venue", "").strip()
+
+    start = parse_datetime(start_param) if start_param else None
+    end = parse_datetime(end_param) if end_param else None
+
+    if not start or not end:
+        return JsonResponse([], safe=False)
+
+    if timezone.is_naive(start):
+        start = timezone.make_aware(start)
+
+    if timezone.is_naive(end):
+        end = timezone.make_aware(end)
+
+    events = []
+
+    # Get bookings across all venues
+    bookings = Booking.objects.filter(
+        start__lt=end,
+        end__gt=start,
+        status__in=[
+            Booking.Status.PENDING,
+            Booking.Status.CONFIRMED,
+        ],
+    )
+
+    # Filter bookings if a specific venue is selected
+    if venue_id.isdigit():
+        bookings = bookings.filter(venue_id=int(venue_id))
+
+    bookings = bookings.select_related("venue")
+
+    for booking in bookings:
+        events.append({
+            "title": f"{booking.venue.name} - Booked",
+            "start": booking.start.isoformat(),
+            "end": booking.end.isoformat(),
+        })
+
+    # Get blocked dates
+    blocked_dates = BlockedDate.objects.filter(
+        start__lt=end,
+        end__gt=start,
+    )
+
+    # Include global blocks and selected venue's blocks
+    if venue_id.isdigit():
+        blocked_dates = blocked_dates.filter(
+            Q(venue__isnull=True) | Q(venue_id=int(venue_id))
+        )
+
+    blocked_dates = blocked_dates.select_related("venue")
+
+    for blocked in blocked_dates:
+        venue_name = blocked.venue.name if blocked.venue else "All venues"
+
+        events.append({
+            "title": f"BLOCKED: {venue_name} - {blocked.reason}",
+            "start": blocked.start.isoformat(),
+            "end": blocked.end.isoformat(),
+            "color": "#dc3545",
+            "textColor": "#ffffff",
+            "borderColor": "#b02a37",
+        })
+
+    return JsonResponse(events, safe=False)
+
 def _day_bars(venue, day):
     """Booked bars and hour ticks for one venue on one day (shared by the venue page and /book/)."""
     tz = timezone.get_current_timezone()
@@ -120,6 +321,81 @@ def venue_detail(request, pk):
         "extra": getattr(venue, "classroom", None) or getattr(venue, "lab", None) or getattr(venue, "seminarhall", None),
     })
 
+@admin_only
+def venue_create(request, kind):
+    form_class = VENUE_FORMS.get(kind)
+
+    if not form_class:
+        raise Http404
+
+    form = form_class(request.POST or None)
+
+    if request.method == "POST" and form.is_valid():
+        venue = form.save()
+        messages.success(request, f"{venue.name} was added successfully.")
+        return redirect("venue_detail", pk=venue.pk)
+
+    return render(request, "web/venue_form.html", {
+        "form": form,
+        "kind": kind,
+        "is_edit": False,
+    })
+
+
+@admin_only
+def venue_edit(request, pk):
+    venue = get_object_or_404(Venue, pk=pk)
+    kind = kind_of(venue)
+    form_class = VENUE_FORMS.get(kind)
+
+    if not form_class:
+        raise Http404
+
+    if kind == "classroom":
+        instance = venue.classroom
+    elif kind == "lab":
+        instance = venue.lab
+    else:
+        instance = venue.seminarhall
+
+    form = form_class(request.POST or None, instance=instance)
+    if request.method == "POST" and form.is_valid():
+        venue = form.save()
+        messages.success(request, f"{venue.name} was updated successfully.")
+        return redirect("venue_detail", pk=venue.pk)
+
+    return render(request, "web/venue_form.html", {
+        "form": form,
+        "kind": kind,
+        "venue": venue,
+        "is_edit": True,
+    })
+
+@admin_only
+def blocked_date_create(request):
+    if request.method == "POST":
+        form = BlockedDateForm(request.POST)
+
+        if form.is_valid():
+            blocked_date = form.save(commit=False)
+            blocked_date.created_by = request.user
+            blocked_date.save()
+
+            messages.success(request, "Blocked date added successfully.")
+
+            if blocked_date.venue:
+                return redirect("venue_calendar", pk=blocked_date.venue.pk)
+
+            return redirect("venue_list")
+
+    else:
+        form = BlockedDateForm()
+
+    return render(
+        request,
+        "web/blocked_date_form.html",
+        {"form": form},
+    )
 
 def society_list(request):
     return render(request, "web/society_list.html", {

@@ -21,4 +21,12 @@ urlpatterns = [
     path("bookings/<int:pk>/cancel/", views.cancel_booking, name="cancel_booking"),
     path("manage/", views.manage, name="manage"),
     path("manage/<int:pk>/<str:action>/", views.manage_action, name="manage_action"),
+    path("venues/add/<str:kind>/", views.venue_create, name="venue_create"),
+    path("venues/<int:pk>/edit/", views.venue_edit, name="venue_edit"),
+    path("availability/", views.availability, name="availability"),
+    path("venues/<int:pk>/calendar/", views.venue_calendar, name="venue_calendar"),
+    path("venues/<int:pk>/events/", views.venue_events, name="venue_events"),
+    path("blocked-dates/add/", views.blocked_date_create, name="blocked_date_create"),
+    path("calendar/", views.global_calendar, name="global_calendar"),
+    path("calendar/events/", views.global_events, name="global_events"),
 ]

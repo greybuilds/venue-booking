@@ -4,6 +4,23 @@
 {% block extra_css %}<link href="{% static 'css/vlist.css' %}?v=2" rel="stylesheet">{% endblock %}
 {% block content %}
 <div class="page-head"><p class="eyebrow mb-1">Browse</p><h1>Venues</h1></div>
+{% if user.is_authenticated %}
+    {% if user.role == "ADMIN" or user.is_superuser %}
+        <div class="mb-4 d-flex gap-2 flex-wrap">
+            <a href="{% url 'venue_create' 'classroom' %}" class="btn btn-ink">
+                + Add Classroom
+            </a>
+
+            <a href="{% url 'venue_create' 'lab' %}" class="btn btn-ink">
+                + Add Lab
+            </a>
+
+            <a href="{% url 'venue_create' 'hall' %}" class="btn btn-ink">
+                + Add Seminar Hall
+            </a>
+        </div>
+    {% endif %}
+{% endif %}
 <form class="filterbar" method="get">
   <input class="form-control" name="q" aria-label="Search venues by name or building" value="{{ q }}" placeholder="Search name or building">
   <select class="form-select" name="kind" aria-label="Venue type">
@@ -18,7 +35,7 @@
 <p class="result-line"><b>{{ venues|length }}</b> venue{{ venues|length|pluralize }}</p>
 <ul class="vlist">
   {% for v, k in venues %}
-  <li class="vrow" style="--o:{{ v.opens_at.hour }}; --c:{{ v.closes_at.hour|default:24 }}">
+  <li class="vrow" data-open-hour="{{ v.opens_at.hour }}" data-close-hour="{{ v.closes_at.hour|default:'24' }}">
     <div class="vrow__name">
       <h2><a class="stretched-link" href="{% url 'venue_detail' v.pk %}">{{ v.name }}</a></h2>
       <span>{{ k }} &middot; {{ v.building }}, floor {{ v.floor }}</span>

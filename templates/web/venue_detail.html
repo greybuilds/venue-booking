@@ -39,6 +39,18 @@
         {% if extra.supervisor %}<div><dt>Supervisor</dt><dd>{{ extra.supervisor }}</dd></div>{% endif %}
         {% if extra.av_kit %}<div><dt>AV kit</dt><dd>{{ extra.av_kit }}</dd></div>{% endif %}
       </dl>
+      {% if user.is_authenticated %}
+      {% if user.role == "ADMIN" or user.is_superuser %}
+        <a class="btn btn-outline-dark w-100 mb-2"
+           href="{% url 'venue_edit' venue.pk %}">
+            Edit Venue
+        </a>
+    {% endif %}
+{% endif %}
+      <a class="btn btn-outline-dark w-100 mb-2"
+        href="{% url 'venue_calendar' venue.pk %}">
+        View Calendar
+      </a>
       <a class="btn btn-accent w-100" href="{% url 'book' %}?venue={{ venue.pk }}&date={{ day|date:'Y-m-d' }}">Book this venue</a>
     </aside>
   </div>
