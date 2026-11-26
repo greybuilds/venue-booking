@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Roomly | Room booking for university societies{% endblock %}
-{% block extra_css %}<link href="{% static 'css/vlist.css' %}?v=2" rel="stylesheet"><link href="{% static 'css/home.css' %}?v=17" rel="stylesheet">{% endblock %}
+{% block extra_css %}<link href="{% static 'css/vlist.css' %}" rel="stylesheet"><link href="{% static 'css/home.css' %}" rel="stylesheet">{% endblock %}
 
 {% block content %}
 <script>try{if(!sessionStorage.getItem('vb-intro')&&!matchMedia('(prefers-reduced-motion: reduce)').matches){document.documentElement.classList.add('has-intro');sessionStorage.setItem('vb-intro','1')}}catch(e){}</script>
@@ -91,4 +91,4 @@
 </section>
 
 {% endblock %}
-{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home-receipt.js' %}?v=8"></script><script src="{% static 'js/home.js' %}?v=7" defer></script>{% endblock %}
+{% block extra_js %}<script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script><script src="{% static 'js/home-art.js' %}"></script><script src="{% static 'js/home-receipt.js' %}"></script><script src="{% static 'js/home.js' %}" defer></script>{% endblock %}
