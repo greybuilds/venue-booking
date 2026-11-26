@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %}Venues | Roomly{% endblock %}
-{% block extra_css %}<link href="{% static 'css/vlist.css' %}?v=2" rel="stylesheet">{% endblock %}
+{% block extra_css %}<link href="{% static 'css/vlist.css' %}" rel="stylesheet">{% endblock %}
 {% block content %}
 <div class="page-head"><p class="eyebrow mb-1">Browse</p><h1>Venues</h1></div>
 {% if user.is_authenticated %}
