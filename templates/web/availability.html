@@ -1,0 +1,53 @@
+
+{% extends "base.html" %}
+
+{% block title %}Check Availability | Roomly{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h1>Check Venue Availability</h1>
+    <p class="text-muted">Find a venue that is free for your required date and time.</p>
+
+    <form method="get" class="card card-body mb-4">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+                {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">
+            Search Available Venues
+        </button>
+    </form>
+
+    {% if searched %}
+        <h2>Available Venues</h2>
+
+        {% if available_venues %}
+            <div class="row g-3">
+                {% for venue in available_venues %}
+                    <div class="col-md-6">
+                        <div class="card card-body h-100">
+                            <h3>{{ venue.name }}</h3>
+                            <p>{{ venue.building }}, Floor {{ venue.floor }}</p>
+                            <p>Capacity: {{ venue.capacity }} people</p>
+                            <a href="{% url 'venue_detail' venue.pk %}"
+                               class="btn btn-outline-primary">
+                                View Venue
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>No available venues match your search.</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}

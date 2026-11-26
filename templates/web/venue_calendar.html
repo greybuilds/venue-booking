@@ -1,0 +1,119 @@
+
+{% extends "base.html" %}
+
+{% block title %}{{ venue.name }} Calendar | Roomly{% endblock %}
+
+{% block content %}
+
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h1>{{ venue.name }} Calendar</h1>
+            <p class="text-muted mb-0">View bookings and blocked dates for this venue.</p>
+        </div>
+
+        {% if user.is_authenticated %}
+            {% if user.role == "ADMIN" or user.is_superuser %}
+                <a href="{% url 'blocked_date_create' %}" class="btn btn-accent">
+                    + Add Blocked Date
+                </a>
+            {% endif %}
+        {% endif %}
+    </div>
+
+    <div id="calendar"></div>
+
+</div>
+
+<style>
+    #calendar {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+
+    .fc .fc-daygrid-event {
+        padding: 5px;
+        margin-top: 3px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: normal;
+        border-radius: 5px;
+    }
+
+    .fc .fc-event-title,
+    .fc .fc-event-time {
+        white-space: normal;
+    }
+
+    .fc .fc-daygrid-day-number {
+        padding: 8px;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 24px;
+        font-weight: 600;
+    }
+
+    .fc .fc-button {
+        text-transform: capitalize;
+    }
+</style>
+
+<!-- Luxon timezone library -->
+<script src="https://cdn.jsdelivr.net/npm/luxon@3/build/global/luxon.min.js"></script>
+
+<!-- FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+
+<!-- FullCalendar Luxon timezone plugin -->
+<script src="https://cdn.jsdelivr.net/npm/@fullcalendar/luxon3@6.1.15/index.global.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const calendarEl = document.getElementById("calendar");
+
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+
+        initialView: "dayGridMonth",
+
+        height: "auto",
+
+        timeZone: "Asia/Karachi",
+
+        eventDisplay: "block",
+
+        displayEventTime: true,
+
+        eventTimeFormat: {
+            hour: "numeric",
+            minute: "2-digit",
+            meridiem: "short"
+        },
+
+        events: "{% url 'venue_events' venue.pk %}",
+
+        headerToolbar: {
+            left: "prev,next today",
+            center: "title",
+            right: "dayGridMonth,timeGridWeek,listWeek"
+        },
+
+        dayMaxEvents: 3,
+
+        eventClick: function(info) {
+            alert(
+                info.event.title +
+                "\nStart: " + info.event.start.toLocaleString()
+            );
+        }
+
+    });
+
+    calendar.render();
+
+});
+</script>
+
+{% endblock %}

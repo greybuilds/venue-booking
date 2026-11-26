@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.db import models
 
 
@@ -53,3 +54,21 @@ class Lab(Venue):
 
 class SeminarHall(Venue):
     av_kit = models.TextField(blank=True)
+
+class BlockedDate(models.Model):
+    venue = models.ForeignKey(
+        Venue,
+        null=True,
+        blank=True,
+        on_delete=models.CASCADE
+    )
+    start = models.DateTimeField()
+    end = models.DateTimeField()
+    reason = models.CharField(max_length=120)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT
+    )
+
+    def __str__(self):
+        return self.reason

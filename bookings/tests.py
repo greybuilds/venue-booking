@@ -11,7 +11,7 @@ from django.test import TestCase, TransactionTestCase
 from django.utils import timezone
 
 from societies.models import Society
-from venues.models import Classroom, Lab
+from venues.models import BlockedDate, Classroom, Lab
 
 from .exceptions import BookingError, InvalidTransition, RulesFailed
 from .models import Booking
@@ -244,6 +244,7 @@ class StatusTests(Base):
             self.make(at(1, 11), at(1, 9))
 
 
+
 class ServiceTests(Base):
     def test_only_president_or_vp_of_verified_society_can_book(self):
         BookingService.request(self.society, self.hall, at(1, 9), at(1, 10), self.vp)
@@ -278,7 +279,7 @@ class ServiceTests(Base):
     def test_all_problems_are_reported_at_once(self):
         with self.assertRaises(RulesFailed) as ctx:
             BookingService.request(self.society, self.hall, at(1, 6), at(1, 12), self.pres)
-        self.assertGreaterEqual(len(ctx.exception.errors), 2)  # opens at 8, max 4 hours
+        self.assertGreaterEqual(len(ctx.exception.errors), 2)
 
     def test_nearby_free_slots_are_suggested(self):
         BookingService.request(self.society, self.hall, at(1, 9), at(1, 11), self.pres)
@@ -323,6 +324,35 @@ class ServiceTests(Base):
         b = BookingService.request(self.society, self.lab, at(1, 10), at(1, 11), self.pres)
         BookingService.reject(b.pk, self.admin, "no")
         BookingService.request(self.society2, self.lab, at(1, 10), at(1, 11), self.other)
+
+    def test_booking_inside_blocked_date_is_rejected(self):
+        start = at(1, 9)
+        end = at(1, 10)
+
+        BlockedDate.objects.create(
+            venue=self.hall,
+            start=start,
+            end=end,
+            reason="Maintenance",
+            created_by=self.admin,
+        )
+
+        with self.assertRaises(BookingError):
+            BookingService.request(
+                self.society,
+                self.hall,
+                start,
+                end,
+                self.pres,
+            )
+
+        self.assertFalse(
+            Booking.objects.filter(
+                venue=self.hall,
+                start=start,
+                end=end,
+            ).exists()
+        )
 
 
 class CloseBookingsTests(Base):

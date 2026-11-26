@@ -8,7 +8,7 @@ from django.utils import timezone
 from accounts.models import User
 from bookings.models import Booking
 from societies.models import Society
-from venues.models import Classroom, Lab
+from venues.models import BlockedDate, Classroom, Lab
 
 
 class WebPagesTests(TestCase):
@@ -104,6 +104,47 @@ class WebPagesTests(TestCase):
         self.client.force_login(self.vp)
         self.client.post(reverse("cancel_booking", args=[b.pk]))
         b.refresh_from_db(); self.assertEqual(b.status, "CANCELLED")
+
+def test_availability_excludes_venue_during_blocked_date(self):
+    slot = self.slot()
+
+    start = timezone.make_aware(
+        timezone.datetime.combine(
+            timezone.datetime.strptime(slot["date"], "%Y-%m-%d").date(),
+            time(10, 0),
+        )
+    )
+    end = start + timedelta(hours=1)
+
+    BlockedDate.objects.create(
+        venue=self.room,
+        start=start,
+        end=end,
+        reason="Maintenance",
+        created_by=self.admin,
+    )
+
+    response = self.client.get(reverse("availability"), slot)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertNotIn(self.room, response.context["available_venues"])
+
+def test_availability_excludes_venue_outside_opening_hours(self):
+    restricted_room = Classroom.objects.create(
+        name="Restricted Room",
+        building="B",
+        floor=1,
+        capacity=30,
+        opens_at=time(11, 0),
+        closes_at=time(17, 0),
+    )
+
+    slot = self.slot(hour=10)
+
+    response = self.client.get(reverse("availability"), slot)
+
+    self.assertEqual(response.status_code, 200)
+    self.assertNotIn(restricted_room, response.context["available_venues"])
 
 
 class HtmxTests(TestCase):

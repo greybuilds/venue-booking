@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_edit %}Edit Venue{% else %}Add Venue{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2>
+        {% if is_edit %}
+            Edit {{ venue.name }}
+        {% else %}
+            Add {{ kind|title }}
+        {% endif %}
+    </h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% for field in form %}
+            <div class="mb-3">
+                {{ field.label_tag }}
+                {{ field }}
+
+                {% for error in field.errors %}
+                    <div class="text-danger">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% for error in form.non_field_errors %}
+            <div class="text-danger mb-3">{{ error }}</div>
+        {% endfor %}
+
+        <button type="submit" class="btn btn-primary">
+            {% if is_edit %}Save Changes{% else %}Create Venue{% endif %}
+        </button>
+
+        <a href="{% if venue %}{% url 'venue_detail' venue.pk %}{% else %}{% url 'venue_list' %}{% endif %}"
+           class="btn btn-secondary">
+            Cancel
+        </a>
+    </form>
+</div>
+{% endblock %}

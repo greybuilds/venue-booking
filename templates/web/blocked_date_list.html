@@ -1,0 +1,103 @@
+
+{% extends "base.html" %}
+{% load tz %}
+
+{% block title %}Blocked Dates | Roomly{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h1 class="mb-2">Blocked Dates</h1>
+            <p class="text-muted mb-0">
+                View and manage dates when venues are unavailable.
+            </p>
+        </div>
+
+        <a href="{% url 'blocked_date_create' %}" class="btn btn-accent">
+            + Add Blocked Date
+        </a>
+    </div>
+
+    {% if blocked_dates %}
+        <div class="vb-card p-3">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Venue</th>
+                            <th>Reason</th>
+                            <th>Starts</th>
+                            <th>Ends</th>
+                            <th>Created By</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for blocked in blocked_dates %}
+                        <tr>
+                            <td>
+                                {% if blocked.venue %}
+                                    <span class="badge bg-warning text-dark">
+                                        {{ blocked.venue.name }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-warning text-dark">
+                                        Campus-wide
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ blocked.reason }}</td>
+
+                            <td>
+                                {{ blocked.start|localtime|date:"d M Y" }}
+                                <br>
+                                <small class="text-muted">
+                                    {{ blocked.start|localtime|date:"g:i A" }}
+                                </small>
+                            </td>
+
+                            <td>
+                                {{ blocked.end|localtime|date:"d M Y" }}
+                                <br>
+                                <small class="text-muted">
+                                    {{ blocked.end|localtime|date:"g:i A" }}
+                                </small>
+                            </td>
+
+                            <td>{{ blocked.created_by }}</td>
+
+                            <td>
+                                <form method="post"
+                                      action="{% url 'blocked_date_delete' blocked.pk %}"
+                                      onsubmit="return confirm('Are you sure you want to delete this blocked date?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    {% else %}
+        <div class="vb-card p-5 text-center">
+            <h4>No Blocked Dates</h4>
+            <p class="text-muted mb-3">
+                There are currently no blocked dates in the system.
+            </p>
+            <a href="{% url 'blocked_date_create' %}" class="btn btn-accent">
+                Add First Blocked Date
+            </a>
+        </div>
+    {% endif %}
+
+</div>
+{% endblock %}
