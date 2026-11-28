@@ -293,3 +293,13 @@ body:has(.rc) { overflow-x: clip; }
 .availbar .btn { border-radius: 999px; min-height: 44px; padding-inline: 1.6rem; }
 .vrow--avail { grid-template-columns: minmax(0, 1.6fr) 7rem 8.5rem; }
 @media (max-width: 720px) { .vrow--avail { grid-template-columns: 1fr auto; } }
+
+/* calendars on phones */
+@media (max-width: 640px) {
+  .fc .fc-toolbar { flex-wrap: wrap; justify-content: space-between; gap: .6rem; }
+  .fc .fc-toolbar-title { order: -1; flex: 1 0 100%; font-size: 1.15rem !important; margin: 0; }
+  .fc .fc-button { padding: .35rem .7rem; font-size: .85rem; }
+  .fc .fc-col-header-cell-cushion { font-size: .68rem; padding: 4px 0; }
+  .fc .fc-timegrid-axis-cushion, .fc .fc-timegrid-slot-label-cushion { font-size: .7rem; padding: 0 .2rem; }
+  .fc .fc-daygrid-day-number { padding: 4px !important; font-size: .85rem; }
+}
