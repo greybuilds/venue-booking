@@ -286,7 +286,7 @@ body:has(.rc) { overflow-x: clip; }
 
 /* availability search */
 .availbar { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .9rem 1rem; align-items: end; margin-bottom: 1.6rem; }
-.availbar__f label { display: block; font-size: .8rem; font-weight: 700; margin: 0 0 .3rem .9rem; }
+.availbar__f label { display: block; font-size: .8rem; font-weight: 700; margin: 0 0 .3rem; padding-left: .9rem; line-height: 1.3; }
 .availbar__f .form-control, .availbar__f .form-select { border-radius: 999px; background-color: var(--bg); padding-inline: 1.1rem; min-height: 44px; }
 .availbar__err { color: #b42318; font-size: .85rem; margin: .3rem 0 0 .9rem; }
 .availbar__err--wide { grid-column: 1 / -1; margin: 0; }
