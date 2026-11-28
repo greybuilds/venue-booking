@@ -1,53 +1,46 @@
-
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Check Availability | Roomly{% endblock %}
+{% block title %}Check availability | Roomly{% endblock %}
+{% block extra_css %}<link href="{% static 'css/vlist.css' %}" rel="stylesheet">{% endblock %}
 
 {% block content %}
-<div class="container py-5">
-    <h1>Check Venue Availability</h1>
-    <p class="text-muted">Find a venue that is free for your required date and time.</p>
-
-    <form method="get" class="card card-body mb-4">
-        {% csrf_token %}
-
-        {% for field in form %}
-            <div class="mb-3">
-                {{ field.label_tag }}
-                {{ field }}
-                {% for error in field.errors %}
-                    <div class="text-danger">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
-
-        <button type="submit" class="btn btn-primary">
-            Search Available Venues
-        </button>
-    </form>
-
-    {% if searched %}
-        <h2>Available Venues</h2>
-
-        {% if available_venues %}
-            <div class="row g-3">
-                {% for venue in available_venues %}
-                    <div class="col-md-6">
-                        <div class="card card-body h-100">
-                            <h3>{{ venue.name }}</h3>
-                            <p>{{ venue.building }}, Floor {{ venue.floor }}</p>
-                            <p>Capacity: {{ venue.capacity }} people</p>
-                            <a href="{% url 'venue_detail' venue.pk %}"
-                               class="btn btn-outline-primary">
-                                View Venue
-                            </a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p>No available venues match your search.</p>
-        {% endif %}
-    {% endif %}
+<div class="page-head">
+    <h1>Check availability</h1>
+    <p class="text-muted mb-0">Pick a date and time. We'll list the venues that are free.</p>
 </div>
+
+<form method="get" class="availbar">
+    {% for field in form %}
+        <div class="availbar__f">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% for error in field.errors %}
+                <div class="availbar__err">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    {% for error in form.non_field_errors %}
+        <div class="availbar__err availbar__err--wide">{{ error }}</div>
+    {% endfor %}
+    <button type="submit" class="btn btn-ink">Search venues</button>
+</form>
+
+{% if searched %}
+    <p class="result-line"><b>{{ available_venues|length }}</b> venue{{ available_venues|length|pluralize }} free</p>
+    <ul class="vlist">
+        {% for venue in available_venues %}
+        <li class="vrow vrow--avail">
+            <div class="vrow__name">
+                <h2><a class="stretched-link" href="{% url 'venue_detail' venue.pk %}">{{ venue.name }}</a></h2>
+                <span>{{ venue.building }}, floor {{ venue.floor }}</span>
+            </div>
+            <div class="vrow__cap"><b>{{ venue.capacity }}</b> seats</div>
+            <div class="vrow__tag">{% if venue.requires_approval %}<span class="chip approval">Needs approval</span>{% else %}<span class="chip">Instant</span>{% endif %}</div>
+        </li>
+        {% empty %}
+        <li class="vlist__empty">No venue is free then. Try another time or <a class="link-draw" href="{% url 'availability' %}">clear the search</a>.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
 {% endblock %}
