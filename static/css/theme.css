@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Instrument+Sans:wght@400..700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Schibsted+Grotesk:wght@400..700&display=swap");
 
 :root {
   --bg: #ffffff;
@@ -14,7 +14,7 @@
   --rejected: #c62828;
   --cancelled: #8a8a8a;
 
-  --display: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
+  --display: "Bricolage Grotesque", "Schibsted Grotesk", system-ui, sans-serif;
   --ease: cubic-bezier(0.23, 1, 0.32, 1); --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
 
   --bs-body-bg: var(--bg);
@@ -33,7 +33,7 @@
 .alert-warning { border-left-color: var(--pending); }
 .alert-danger { background: #fdeceb; border-color: #f3c6c3; border-left-color: var(--rejected); }
 
-body { font-family: "Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
+body { font-family: "Schibsted Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--text); }
 a { text-underline-offset: 3px; }
 
 /* nav: a floating glass pill. Frosted white, links in the middle, the hover is the dashed request block sliding between slots, the active page is a booked (ink) block. Past the first screen it condenses (wordmark and username fold away). On phones the pill grows into a rounded panel. */
