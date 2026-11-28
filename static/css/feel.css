@@ -283,3 +283,13 @@ body:has(.rc) { overflow-x: clip; }
 .status-pending { color: #8a5a00; }
 .vb-toast__x { width: 44px; height: 44px; }
 .auth-card p a { min-height: 44px; align-items: center; }
+
+/* availability search */
+.availbar { display: grid; grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr)); gap: .9rem 1rem; align-items: end; margin-bottom: 1.6rem; }
+.availbar__f label { display: block; font-size: .8rem; font-weight: 700; margin: 0 0 .3rem .9rem; }
+.availbar__f .form-control, .availbar__f .form-select { border-radius: 999px; background-color: var(--bg); padding-inline: 1.1rem; min-height: 44px; }
+.availbar__err { color: #b42318; font-size: .85rem; margin: .3rem 0 0 .9rem; }
+.availbar__err--wide { grid-column: 1 / -1; margin: 0; }
+.availbar .btn { border-radius: 999px; min-height: 44px; padding-inline: 1.6rem; }
+.vrow--avail { grid-template-columns: minmax(0, 1.6fr) 7rem 8.5rem; }
+@media (max-width: 720px) { .vrow--avail { grid-template-columns: 1fr auto; } }
