@@ -297,11 +297,13 @@ body:has(.rc) { overflow-x: clip; }
 /* calendars on phones */
 @media (max-width: 640px) {
   .fc .fc-toolbar { flex-wrap: wrap; justify-content: space-between; gap: .6rem; }
-  .fc .fc-toolbar-title { order: -1; flex: 1 0 100%; font-size: 1.15rem !important; margin: 0; }
+  .fc .fc-toolbar-chunk:nth-child(2) { order: -1; flex: 1 0 100%; }
+  .fc .fc-toolbar-title { font-size: 1.15rem !important; margin: 0; }
   .fc .fc-button { padding: .35rem .7rem; font-size: .85rem; }
-  .fc .fc-col-header-cell-cushion { font-size: .68rem; padding: 4px 0; }
-  .fc .fc-timegrid-axis-cushion, .fc .fc-timegrid-slot-label-cushion { font-size: .7rem; padding: 0 .2rem; }
+  .fc .fc-col-header-cell-cushion { font-size: .75rem; padding: 4px 0; }
+  .fc .fc-timegrid-axis-cushion, .fc .fc-timegrid-slot-label-cushion { font-size: .75rem; padding: 0 .2rem; }
   .fc .fc-daygrid-day-number { padding: 4px !important; font-size: .85rem; }
+  .fc .fc-daygrid-event { font-size: .75rem !important; }
 }
 
 /* keep text off the screen edge on phones */
@@ -310,3 +312,7 @@ body:has(.rc) { overflow-x: clip; }
   #main-content .container { padding-inline: 0; }
   .vb-footer .container { padding-inline: 1rem; }
 }
+
+/* calendar colours that pass contrast */
+.fc { --fc-event-bg-color: #1d4f91; --fc-event-border-color: #1d4f91; --fc-event-text-color: #fff; }
+.fc .fc-day-other .fc-daygrid-day-top { opacity: .6; }
